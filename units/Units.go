@@ -31,6 +31,10 @@ type CombatUnit struct {
 	RapidfireAgainst map[string]int
 }
 
+func (ship *CombatUnit) IsDead() bool {
+	return ship.HullPlating <= 0
+}
+
 func (ship *CombatUnit) GetPrice() Price {
 	return ship.Price
 }

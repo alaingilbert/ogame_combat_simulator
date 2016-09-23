@@ -25,6 +25,7 @@ func Round(val float64) int {
 }
 
 type ICombatUnit interface {
+	IsDead() bool
 	GetPrice() units.Price
 	GetName() string
 	GetInitialHullPlating() int
