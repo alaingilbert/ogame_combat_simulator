@@ -566,6 +566,12 @@ func main() {
 	app.Name = "OGame Combat Simulator"
 	app.Usage = "This is usage"
 	app.Version = "0.0.1"
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "Alain Gilbert",
+			Email: "alain.gilbert.15@gmail.com",
+		},
+	}
 	app.Commands = []cli.Command{
 		{
 			Name:  "generate_config",
