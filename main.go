@@ -293,9 +293,7 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 				simulator.Debris.Metal += int(simulator.FleetToDebris * float64(unit.GetPrice().Metal))
 				simulator.Debris.Crystal += int(simulator.FleetToDebris * float64(unit.GetPrice().Crystal))
 			}
-			simulator.DefenderLosses.Metal += unit.GetPrice().Metal
-			simulator.DefenderLosses.Crystal += unit.GetPrice().Crystal
-			simulator.DefenderLosses.Deuterium += unit.GetPrice().Deuterium
+			simulator.DefenderLosses.Add(unit.GetPrice())
 			simulator.Defender.Units = append(simulator.Defender.Units[:i], simulator.Defender.Units[i+1:]...)
 			if simulator.IsLogging {
 				fmt.Println(fmt.Sprintf("%s lost all its integrity, remove from battle", unit.GetName()))
@@ -309,9 +307,7 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 				simulator.Debris.Metal += int(simulator.FleetToDebris * float64(unit.GetPrice().Metal))
 				simulator.Debris.Crystal += int(simulator.FleetToDebris * float64(unit.GetPrice().Crystal))
 			}
-			simulator.AttackerLosses.Metal += unit.GetPrice().Metal
-			simulator.AttackerLosses.Crystal += unit.GetPrice().Crystal
-			simulator.AttackerLosses.Deuterium += unit.GetPrice().Deuterium
+			simulator.AttackerLosses.Add(unit.GetPrice())
 			simulator.Attacker.Units = append(simulator.Attacker.Units[:i], simulator.Attacker.Units[i+1:]...)
 			if simulator.IsLogging {
 				fmt.Println(fmt.Sprintf("%s lost all its integrity, remove from battle", unit.GetName()))
@@ -519,14 +515,9 @@ func start(c *cli.Context) error {
 		} else {
 			draw++
 		}
-		attackerLosses.Metal += cs.AttackerLosses.Metal
-		attackerLosses.Crystal += cs.AttackerLosses.Crystal
-		attackerLosses.Deuterium += cs.AttackerLosses.Deuterium
-		defenderLosses.Metal += cs.DefenderLosses.Metal
-		defenderLosses.Crystal += cs.DefenderLosses.Crystal
-		defenderLosses.Deuterium += cs.DefenderLosses.Deuterium
-		debris.Metal += cs.Debris.Metal
-		debris.Crystal += cs.Debris.Crystal
+		attackerLosses.Add(cs.AttackerLosses)
+		defenderLosses.Add(cs.DefenderLosses)
+		debris.Add(cs.Debris)
 		rounds += cs.Rounds
 		moonchance += cs.GetMoonchance()
 	}

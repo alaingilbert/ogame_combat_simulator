@@ -10,6 +10,12 @@ type Price struct {
 	Deuterium int
 }
 
+func (p *Price) Add(price Price) {
+	p.Metal += price.Metal
+	p.Crystal += price.Crystal
+	p.Deuterium += price.Deuterium
+}
+
 type CombatUnit struct {
 	Price            Price
 	OgameID          int
