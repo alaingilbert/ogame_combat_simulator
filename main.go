@@ -226,6 +226,38 @@ func (simulator *CombatSimulator) attack(attackingUnit, defendingUnit ICombatUni
 	}
 }
 
+func (simulator *CombatSimulator) getAnotherShot(unit, targetUnit ICombatUnit) bool {
+	rapidFire := true
+	rf := unit.GetRapidfireAgainst(targetUnit.GetName())
+	msg := ""
+	if rf > 0 {
+		chance := float64(rf-1) / float64(rf)
+		dice := rand.Float64()
+		if simulator.IsLogging {
+			msg += fmt.Sprintf("dice was %1.3f, comparing with %1.3f: ", dice, chance)
+		}
+		if dice <= chance {
+			if simulator.IsLogging {
+				msg += fmt.Sprintf("%s gets another shot.", unit.GetName())
+			}
+		} else {
+			if simulator.IsLogging {
+				msg += fmt.Sprintf("%s does not get another shot.", unit.GetName())
+			}
+			rapidFire = false
+		}
+	} else {
+		if simulator.IsLogging {
+			msg += fmt.Sprintf("%s doesn't have rapid fire against %s.", unit.GetName(), targetUnit.GetName())
+		}
+		rapidFire = false
+	}
+	if simulator.IsLogging {
+		fmt.Println(msg)
+	}
+	return rapidFire
+}
+
 func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []ICombatUnit) {
 	rand.Seed(time.Now().UnixNano())
 	for _, unit := range attackingUnits {
@@ -233,33 +265,7 @@ func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []IC
 		for rapidFire {
 			targetUnit := defendingUnits[rand.Intn(len(defendingUnits))]
 			simulator.attack(unit, targetUnit)
-			rf := unit.GetRapidfireAgainst(targetUnit.GetName())
-			msg := ""
-			if rf > 0 {
-				chance := float64(rf-1) / float64(rf)
-				dice := rand.Float64()
-				if simulator.IsLogging {
-					msg += fmt.Sprintf("dice was %1.3f, comparing with %1.3f: ", dice, chance)
-				}
-				if dice <= chance {
-					if simulator.IsLogging {
-						msg += fmt.Sprintf("%s gets another shot.", unit.GetName())
-					}
-				} else {
-					if simulator.IsLogging {
-						msg += fmt.Sprintf("%s does not get another shot.", unit.GetName())
-					}
-					rapidFire = false
-				}
-			} else {
-				if simulator.IsLogging {
-					msg += fmt.Sprintf("%s doesn't have rapid fire against %s.", unit.GetName(), targetUnit.GetName())
-				}
-				rapidFire = false
-			}
-			if simulator.IsLogging {
-				fmt.Println(msg)
-			}
+			rapidFire = simulator.getAnotherShot(unit, targetUnit)
 		}
 	}
 }
