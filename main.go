@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"math"
@@ -445,8 +446,56 @@ type defenderInfo struct {
 	LargeShieldDome int
 }
 
+func printResult(result map[string]interface{}) {
+	fmt.Println(fmt.Sprintf("| Results (%d simulations | ~%d rounds)", result["simulations"], result["rounds"]))
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetBorders(tablewriter.Border{Left: true, Top: true, Right: true, Bottom: true})
+	data2 := [][]string{
+		[]string{
+			"Attackers win",
+			fmt.Sprintf("%d%%", result["attacker_win"])},
+		[]string{
+			"Defenders win",
+			fmt.Sprintf("%d%%", result["defender_win"])},
+		[]string{
+			"Draw",
+			fmt.Sprintf("%d%%", result["draw"])},
+	}
+	table.AppendBulk(data2)
+	table.Render()
+
+	fmt.Println("")
+	table = tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"", "Metal", "Crystal", "Deuterium", "Recycler", "Moonchance"})
+	table.SetBorders(tablewriter.Border{Left: true, Top: true, Right: true, Bottom: true})
+	data1 := [][]string{
+		[]string{
+			"Attacker losses",
+			fmt.Sprintf("%d", result["attacker_losses"].(map[string]int)["metal"]),
+			fmt.Sprintf("%d", result["attacker_losses"].(map[string]int)["crystal"]),
+			fmt.Sprintf("%d", result["attacker_losses"].(map[string]int)["deuterium"]),
+			"", ""},
+		[]string{
+			"Defender losses",
+			fmt.Sprintf("%d", result["defender_losses"].(map[string]int)["metal"]),
+			fmt.Sprintf("%d", result["defender_losses"].(map[string]int)["crystal"]),
+			fmt.Sprintf("%d", result["defender_losses"].(map[string]int)["deuterium"]),
+			"", ""},
+		[]string{
+			"Debris",
+			fmt.Sprintf("%d", result["debris"].(map[string]int)["metal"]),
+			fmt.Sprintf("%d", result["debris"].(map[string]int)["crystal"]),
+			"",
+			fmt.Sprintf("%d", result["recycler"]),
+			fmt.Sprintf("%d", result["moonchance"])},
+	}
+	table.AppendBulk(data1)
+	table.Render()
+}
+
 func start(c *cli.Context) error {
 	configPath := c.String("config")
+	jsonOutput := c.Bool("json")
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return errors.New("Config file not found")
@@ -531,9 +580,9 @@ func start(c *cli.Context) error {
 
 	result := map[string]interface{}{}
 	result["simulations"] = nbSimulations
-	result["attacker_win"] = float64(attackerWin) / float64(nbSimulations) * 100
-	result["defender_win"] = float64(defenderWin) / float64(nbSimulations) * 100
-	result["draw"] = float64(draw) / float64(nbSimulations) * 100
+	result["attacker_win"] = Round(float64(attackerWin) / float64(nbSimulations) * 100)
+	result["defender_win"] = Round(float64(defenderWin) / float64(nbSimulations) * 100)
+	result["draw"] = Round(float64(draw) / float64(nbSimulations) * 100)
 	result["rounds"] = Round(float64(rounds) / float64(nbSimulations))
 	result["attacker_losses"] = map[string]int{}
 	result["attacker_losses"].(map[string]int)["metal"] = int(float64(attackerLosses.Metal) / float64(nbSimulations))
@@ -546,15 +595,20 @@ func start(c *cli.Context) error {
 	result["debris"] = map[string]int{}
 	result["debris"].(map[string]int)["metal"] = int(float64(debris.Metal) / float64(nbSimulations))
 	result["debris"].(map[string]int)["crystal"] = int(float64(debris.Crystal) / float64(nbSimulations))
-	result["recycler"] = math.Ceil((float64(debris.Metal+debris.Crystal) / float64(nbSimulations)) / 20000.0)
-	result["moonchance"] = float64(moonchance) / float64(nbSimulations)
+	result["recycler"] = int(math.Ceil((float64(debris.Metal+debris.Crystal) / float64(nbSimulations)) / 20000.0))
+	result["moonchance"] = int(float64(moonchance) / float64(nbSimulations))
 
-	b, err := json.MarshalIndent(result, "", "  ")
-	if err != nil {
-		fmt.Println("Failed to json marshal the result", err)
-		return err
+	if jsonOutput {
+		b, err := json.MarshalIndent(result, "", "  ")
+		if err != nil {
+			fmt.Println("Failed to json marshal the result", err)
+			return err
+		}
+		fmt.Println(string(b))
+	} else {
+		printResult(result)
 	}
-	fmt.Println(string(b))
+
 	return nil
 }
 
@@ -567,6 +621,11 @@ func main() {
 			Value:  "config.toml",
 			Usage:  "Path to config file",
 			EnvVar: "CONFIG_PATH",
+		},
+		cli.BoolFlag{
+			Name:   "json, j",
+			Usage:  "Output json",
+			EnvVar: "JSON_OUTPUT",
 		},
 	}
 	app.Name = "OGame Combat Simulator"
