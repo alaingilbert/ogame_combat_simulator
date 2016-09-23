@@ -1,8 +1,6 @@
 package main
 
 import (
-	"combat_simulator/config"
-	"combat_simulator/units"
 	"encoding/json"
 	"fmt"
 	"github.com/BurntSushi/toml"
@@ -10,6 +8,8 @@ import (
 	"io/ioutil"
 	"math"
 	"math/rand"
+	"ogame_combat_simulator/config"
+	"ogame_combat_simulator/units"
 	"os"
 	"strings"
 	"time"
