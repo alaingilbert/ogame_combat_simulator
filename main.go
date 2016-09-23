@@ -174,59 +174,31 @@ type CombatSimulator struct {
 	Debris         units.Price
 }
 
-func (simulator *CombatSimulator) attack(attackingUnit, defendingUnit ICombatUnit) {
-	msg := ""
-	if simulator.IsLogging {
-		msg += fmt.Sprintf("%s fires at %s; ", attackingUnit, defendingUnit)
-	}
-	// Check for shot bounce
-	if float64(attackingUnit.GetWeapon()) < 0.01*float64(defendingUnit.GetShield()) {
+func (simulator *CombatSimulator) hasExploded(defendingUnit ICombatUnit) bool {
+	exploded := false
+	hullPercentage := float64(defendingUnit.GetHullPlating()) / float64(defendingUnit.GetInitialHullPlating())
+	if hullPercentage <= 0.7 {
+		probabilityOfExploding := 1.0 - float64(defendingUnit.GetHullPlating())/float64(defendingUnit.GetInitialHullPlating())
+		dice := rand.Float64()
+		msg := ""
 		if simulator.IsLogging {
-			msg += "shot bounced"
+			msg += fmt.Sprintf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding)
+		}
+		if dice >= 1-probabilityOfExploding {
+			exploded = true
+			if simulator.IsLogging {
+				msg += "unit exploded."
+			}
+		} else {
+			if simulator.IsLogging {
+				msg += "unit didn't explode."
+			}
+		}
+		if simulator.IsLogging {
 			fmt.Println(msg)
 		}
-		return
 	}
-
-	// Attack target
-	weapon := attackingUnit.GetWeapon()
-	if defendingUnit.GetShield() < weapon {
-		weapon -= defendingUnit.GetShield()
-		defendingUnit.SetShield(0)
-		defendingUnit.SetHullPlating(defendingUnit.GetHullPlating() - weapon)
-	} else {
-		defendingUnit.SetShield(defendingUnit.GetShield() - weapon)
-	}
-	if simulator.IsLogging {
-		msg += fmt.Sprintf("result is %s", defendingUnit)
-		fmt.Println(msg)
-	}
-
-	// Check for explosion
-	if !defendingUnit.IsDead() {
-		hullPercentage := float64(defendingUnit.GetHullPlating()) / float64(defendingUnit.GetInitialHullPlating())
-		if hullPercentage <= 0.7 {
-			probabilityOfExploding := 1.0 - float64(defendingUnit.GetHullPlating())/float64(defendingUnit.GetInitialHullPlating())
-			dice := rand.Float64()
-			msg := ""
-			if simulator.IsLogging {
-				msg += fmt.Sprintf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding)
-			}
-			if dice >= 1-probabilityOfExploding {
-				defendingUnit.SetHullPlating(0)
-				if simulator.IsLogging {
-					msg += "unit exploded."
-				}
-			} else {
-				if simulator.IsLogging {
-					msg += "unit didn't explode."
-				}
-			}
-			if simulator.IsLogging {
-				fmt.Println(msg)
-			}
-		}
-	}
+	return exploded
 }
 
 func (simulator *CombatSimulator) getAnotherShot(unit, targetUnit ICombatUnit) bool {
@@ -261,14 +233,53 @@ func (simulator *CombatSimulator) getAnotherShot(unit, targetUnit ICombatUnit) b
 	return rapidFire
 }
 
+func (simulator *CombatSimulator) attack(attackingUnit, defendingUnit ICombatUnit) {
+	msg := ""
+	if simulator.IsLogging {
+		msg += fmt.Sprintf("%s fires at %s; ", attackingUnit, defendingUnit)
+	}
+	// Check for shot bounce
+	if float64(attackingUnit.GetWeapon()) < 0.01*float64(defendingUnit.GetShield()) {
+		if simulator.IsLogging {
+			msg += "shot bounced"
+			fmt.Println(msg)
+		}
+		return
+	}
+
+	// Attack target
+	weapon := attackingUnit.GetWeapon()
+	if defendingUnit.GetShield() < weapon {
+		weapon -= defendingUnit.GetShield()
+		defendingUnit.SetShield(0)
+		defendingUnit.SetHullPlating(defendingUnit.GetHullPlating() - weapon)
+	} else {
+		defendingUnit.SetShield(defendingUnit.GetShield() - weapon)
+	}
+	if simulator.IsLogging {
+		msg += fmt.Sprintf("result is %s", defendingUnit)
+		fmt.Println(msg)
+	}
+
+	// Check for explosion
+	if !defendingUnit.IsDead() {
+		if simulator.hasExploded(defendingUnit) {
+			defendingUnit.SetHullPlating(0)
+		}
+	}
+}
+
 func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []ICombatUnit) {
 	rand.Seed(time.Now().UnixNano())
 	for _, unit := range attackingUnits {
 		rapidFire := true
 		for rapidFire {
 			targetUnit := defendingUnits[rand.Intn(len(defendingUnits))]
-			simulator.attack(unit, targetUnit)
 			rapidFire = simulator.getAnotherShot(unit, targetUnit)
+			if targetUnit.IsDead() {
+				continue
+			}
+			simulator.attack(unit, targetUnit)
 		}
 	}
 }
