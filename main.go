@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/urfave/cli"
@@ -445,8 +446,14 @@ type defenderInfo struct {
 }
 
 func start(c *cli.Context) error {
+	configPath := c.String("config")
+
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return errors.New("Config file not found")
+	}
+
 	var conf Config
-	if _, err := toml.DecodeFile("config.toml", &conf); err != nil {
+	if _, err := toml.DecodeFile(configPath, &conf); err != nil {
 		fmt.Println("Unable to decode config file", err)
 		return err
 	}
@@ -554,6 +561,14 @@ func start(c *cli.Context) error {
 func main() {
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:   "config, c",
+			Value:  "config.toml",
+			Usage:  "Path to config file",
+			EnvVar: "CONFIG_PATH",
+		},
+	}
 	app.Name = "OGame Combat Simulator"
 	app.Usage = "This is usage"
 	app.Version = "0.0.1"
