@@ -568,6 +568,10 @@ func main() {
 			Name:  "generate_config",
 			Usage: "Generate config file",
 			Action: func(c *cli.Context) error {
+				if _, err := os.Stat("config.toml"); err == nil {
+					fmt.Println("config.toml already exists")
+					return nil
+				}
 				if err := ioutil.WriteFile("config.toml", config.GenerateConfig(), 0644); err != nil {
 					return err
 				}
