@@ -203,26 +203,28 @@ func (simulator *CombatSimulator) attack(attackingUnit, defendingUnit ICombatUni
 	}
 
 	// Check for explosion
-	hullPercentage := float64(defendingUnit.GetHullPlating()) / float64(defendingUnit.GetInitialHullPlating())
-	if hullPercentage <= 0.7 && defendingUnit.GetHullPlating() > 0 {
-		probabilityOfExploding := 1.0 - float64(defendingUnit.GetHullPlating())/float64(defendingUnit.GetInitialHullPlating())
-		dice := rand.Float64()
-		msg := ""
-		if simulator.IsLogging {
-			msg += fmt.Sprintf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding)
-		}
-		if dice >= 1-probabilityOfExploding {
-			defendingUnit.SetHullPlating(0)
+	if !defendingUnit.IsDead() {
+		hullPercentage := float64(defendingUnit.GetHullPlating()) / float64(defendingUnit.GetInitialHullPlating())
+		if hullPercentage <= 0.7 {
+			probabilityOfExploding := 1.0 - float64(defendingUnit.GetHullPlating())/float64(defendingUnit.GetInitialHullPlating())
+			dice := rand.Float64()
+			msg := ""
 			if simulator.IsLogging {
-				msg += "unit exploded."
+				msg += fmt.Sprintf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding)
 			}
-		} else {
+			if dice >= 1-probabilityOfExploding {
+				defendingUnit.SetHullPlating(0)
+				if simulator.IsLogging {
+					msg += "unit exploded."
+				}
+			} else {
+				if simulator.IsLogging {
+					msg += "unit didn't explode."
+				}
+			}
 			if simulator.IsLogging {
-				msg += "unit didn't explode."
+				fmt.Println(msg)
 			}
-		}
-		if simulator.IsLogging {
-			fmt.Println(msg)
 		}
 	}
 }
