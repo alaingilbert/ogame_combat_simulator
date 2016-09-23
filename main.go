@@ -507,50 +507,6 @@ func start(c *cli.Context) error {
 		return err
 	}
 
-	attacker := NewAttacker()
-	attacker.Weapon = conf.Attacker.Weapon
-	attacker.Shield = conf.Attacker.Shield
-	attacker.Armour = conf.Attacker.Armour
-	attacker.SmallCargo = conf.Attacker.SmallCargo
-	attacker.LargeCargo = conf.Attacker.LargeCargo
-	attacker.LightFighter = conf.Attacker.LightFighter
-	attacker.HeavyFighter = conf.Attacker.HeavyFighter
-	attacker.Cruiser = conf.Attacker.Cruiser
-	attacker.Battleship = conf.Attacker.Battleship
-	attacker.ColonyShip = conf.Attacker.ColonyShip
-	attacker.Recycler = conf.Attacker.Recycler
-	attacker.EspionageProbe = conf.Attacker.EspionageProbe
-	attacker.Bomber = conf.Attacker.Bomber
-	attacker.Destroyer = conf.Attacker.Destroyer
-	attacker.Deathstar = conf.Attacker.Deathstar
-	attacker.Battlecruiser = conf.Attacker.Battlecruiser
-
-	defender := NewDefender()
-	defender.Weapon = conf.Defender.Weapon
-	defender.Shield = conf.Defender.Shield
-	defender.Armour = conf.Defender.Armour
-	defender.SmallCargo = conf.Defender.SmallCargo
-	defender.LargeCargo = conf.Defender.LargeCargo
-	defender.LightFighter = conf.Defender.LightFighter
-	defender.HeavyFighter = conf.Defender.HeavyFighter
-	defender.Cruiser = conf.Defender.Cruiser
-	defender.Battleship = conf.Defender.Battleship
-	defender.ColonyShip = conf.Defender.ColonyShip
-	defender.Recycler = conf.Defender.Recycler
-	defender.EspionageProbe = conf.Defender.EspionageProbe
-	defender.Bomber = conf.Defender.Bomber
-	defender.Destroyer = conf.Defender.Destroyer
-	defender.Deathstar = conf.Defender.Deathstar
-	defender.Battlecruiser = conf.Defender.Battlecruiser
-	defender.RocketLauncher = conf.Defender.RocketLauncher
-	defender.LightLaser = conf.Defender.LightLaser
-	defender.HeavyLaser = conf.Defender.HeavyLaser
-	defender.GaussCannon = conf.Defender.GaussCannon
-	defender.IonCannon = conf.Defender.IonCannon
-	defender.PlasmaTurret = conf.Defender.PlasmaTurret
-	defender.SmallShieldDome = conf.Defender.SmallShieldDome
-	defender.LargeShieldDome = conf.Defender.LargeShieldDome
-
 	nbSimulations := conf.Simulations
 	attackerWin := 0
 	defenderWin := 0
@@ -560,10 +516,62 @@ func start(c *cli.Context) error {
 	debris := units.Price{}
 	rounds := 0
 	moonchance := 0
+	resChan := make(chan *CombatSimulator, nbSimulations)
 	for i := 0; i < nbSimulations; i++ {
-		cs := NewCombatSimulator(attacker, defender)
-		cs.IsLogging = conf.IsLogging
-		cs.Simulate()
+		go func() {
+			attacker := NewAttacker()
+			attacker.Weapon = conf.Attacker.Weapon
+			attacker.Shield = conf.Attacker.Shield
+			attacker.Armour = conf.Attacker.Armour
+			attacker.SmallCargo = conf.Attacker.SmallCargo
+			attacker.LargeCargo = conf.Attacker.LargeCargo
+			attacker.LightFighter = conf.Attacker.LightFighter
+			attacker.HeavyFighter = conf.Attacker.HeavyFighter
+			attacker.Cruiser = conf.Attacker.Cruiser
+			attacker.Battleship = conf.Attacker.Battleship
+			attacker.ColonyShip = conf.Attacker.ColonyShip
+			attacker.Recycler = conf.Attacker.Recycler
+			attacker.EspionageProbe = conf.Attacker.EspionageProbe
+			attacker.Bomber = conf.Attacker.Bomber
+			attacker.Destroyer = conf.Attacker.Destroyer
+			attacker.Deathstar = conf.Attacker.Deathstar
+			attacker.Battlecruiser = conf.Attacker.Battlecruiser
+
+			defender := NewDefender()
+			defender.Weapon = conf.Defender.Weapon
+			defender.Shield = conf.Defender.Shield
+			defender.Armour = conf.Defender.Armour
+			defender.SmallCargo = conf.Defender.SmallCargo
+			defender.LargeCargo = conf.Defender.LargeCargo
+			defender.LightFighter = conf.Defender.LightFighter
+			defender.HeavyFighter = conf.Defender.HeavyFighter
+			defender.Cruiser = conf.Defender.Cruiser
+			defender.Battleship = conf.Defender.Battleship
+			defender.ColonyShip = conf.Defender.ColonyShip
+			defender.Recycler = conf.Defender.Recycler
+			defender.EspionageProbe = conf.Defender.EspionageProbe
+			defender.Bomber = conf.Defender.Bomber
+			defender.Destroyer = conf.Defender.Destroyer
+			defender.Deathstar = conf.Defender.Deathstar
+			defender.Battlecruiser = conf.Defender.Battlecruiser
+			defender.RocketLauncher = conf.Defender.RocketLauncher
+			defender.LightLaser = conf.Defender.LightLaser
+			defender.HeavyLaser = conf.Defender.HeavyLaser
+			defender.GaussCannon = conf.Defender.GaussCannon
+			defender.IonCannon = conf.Defender.IonCannon
+			defender.PlasmaTurret = conf.Defender.PlasmaTurret
+			defender.SmallShieldDome = conf.Defender.SmallShieldDome
+			defender.LargeShieldDome = conf.Defender.LargeShieldDome
+
+			cs := NewCombatSimulator(attacker, defender)
+			cs.IsLogging = conf.IsLogging
+			cs.Simulate()
+			resChan <- cs
+		}()
+	}
+
+	for i := 0; i < nbSimulations; i++ {
+		cs := <-resChan
 		if cs.Winner == "attacker" {
 			attackerWin++
 		} else if cs.Winner == "defender" {
