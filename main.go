@@ -574,6 +574,7 @@ func start(c *cli.Context) error {
 		defender.Recycler = conf.Defender.Recycler
 		defender.EspionageProbe = conf.Defender.EspionageProbe
 		defender.Bomber = conf.Defender.Bomber
+		defender.SolarSatellite = conf.Defender.SolarSatellite
 		defender.Destroyer = conf.Defender.Destroyer
 		defender.Deathstar = conf.Defender.Deathstar
 		defender.Battlecruiser = conf.Defender.Battlecruiser
