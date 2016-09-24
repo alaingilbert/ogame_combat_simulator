@@ -106,30 +106,6 @@ func (e *Entity) Init() {
 	}
 }
 
-type Attacker struct {
-	Entity
-	Combustion int
-	Impulse    int
-	Hyperspace int
-}
-
-func NewAttacker() *Attacker {
-	attacker := new(Attacker)
-	return attacker
-}
-
-type Defender struct {
-	Entity
-	RocketLauncher  int
-	LightLaser      int
-	HeavyLaser      int
-	GaussCannon     int
-	IonCannon       int
-	PlasmaTurret    int
-	SmallShieldDome int
-	LargeShieldDome int
-}
-
 func (e *Defender) Init() {
 	e.Entity.Init()
 	for i := 0; i < e.RocketLauncher; i++ {
@@ -156,6 +132,30 @@ func (e *Defender) Init() {
 	for i := 0; i < e.LargeShieldDome; i++ {
 		e.Units = append(e.Units, units.NewLargeShieldDome())
 	}
+}
+
+type Attacker struct {
+	Entity
+	Combustion int
+	Impulse    int
+	Hyperspace int
+}
+
+func NewAttacker() *Attacker {
+	attacker := new(Attacker)
+	return attacker
+}
+
+type Defender struct {
+	Entity
+	RocketLauncher  int
+	LightLaser      int
+	HeavyLaser      int
+	GaussCannon     int
+	IonCannon       int
+	PlasmaTurret    int
+	SmallShieldDome int
+	LargeShieldDome int
 }
 
 func NewDefender() *Defender {
