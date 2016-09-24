@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli"
+	"gopkg.in/cheggaaa/pb.v1"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -590,6 +591,14 @@ func start(c *cli.Context) error {
 		workChan <- cs
 	}
 
+	bar := pb.New(nbSimulations)
+	bar.ShowTimeLeft = false
+	bar.SetWidth(80)
+	if !jsonOutput {
+		fmt.Println("Simulations:")
+		bar.Start()
+	}
+
 	attackerWin := 0
 	defenderWin := 0
 	draw := 0
@@ -601,6 +610,7 @@ func start(c *cli.Context) error {
 
 	for i := 0; i < nbSimulations; i++ {
 		cs := <-resChan
+		bar.Increment()
 		if cs.Winner == "attacker" {
 			attackerWin++
 		} else if cs.Winner == "defender" {
@@ -613,6 +623,10 @@ func start(c *cli.Context) error {
 		debris.Add(cs.Debris)
 		rounds += cs.Rounds
 		moonchance += cs.GetMoonchance()
+	}
+	if !jsonOutput {
+		bar.Finish()
+		fmt.Println("")
 	}
 
 	result := map[string]interface{}{}
