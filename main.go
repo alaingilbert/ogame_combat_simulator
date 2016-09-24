@@ -420,6 +420,7 @@ func NewCombatSimulator(attacker *Attacker, defender *Defender) *CombatSimulator
 type Config struct {
 	IsLogging   bool
 	Simulations int
+	Workers     int
 	Attacker    attackerInfo
 	Defender    defenderInfo
 }
@@ -527,7 +528,7 @@ func start(c *cli.Context) error {
 	}
 
 	nbSimulations := conf.Simulations
-	nbWorkers := 4
+	nbWorkers := conf.Workers
 	workChan := make(chan *CombatSimulator, nbSimulations)
 	resChan := make(chan *CombatSimulator, nbSimulations)
 
