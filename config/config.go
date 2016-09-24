@@ -4,6 +4,7 @@ func GenerateConfig() []byte {
 	configFile := `# OGame Combat Simulator config file
 Simulations     = 1
 IsLogging       = false
+Workers         = 4
 
 [Attacker]
 Weapon          = 0
