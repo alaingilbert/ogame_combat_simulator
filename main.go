@@ -31,11 +31,11 @@ type ICombatUnit interface {
 	GetPrice() units.Price
 	GetName() string
 	GetInitialHullPlating() int
-	GetHullPlating() int
-	SetHullPlating(int)
-	GetShield() int
-	SetShield(int)
-	GetWeapon() int
+	GetHullPlating() float64
+	SetHullPlating(float64)
+	GetShield() float64
+	SetShield(float64)
+	GetWeapon() float64
 	GetRapidfireAgainst(string) int
 	RestoreShield()
 }

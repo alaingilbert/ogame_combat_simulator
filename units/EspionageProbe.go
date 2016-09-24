@@ -9,10 +9,8 @@ func NewEspionageProbe() *EspionageProbe {
 	ep.OgameID = 210
 	ep.Name = "EspionageProbe"
 	ep.Price = Price{0, 1000, 0}
-	ep.ShieldPower = 1
-	ep.WeaponPower = 1
-	//ep.ShieldPower = 0.01
-	//ep.WeaponPower = 0.01
+	ep.ShieldPower = 0.01
+	ep.WeaponPower = 0.01
 	ep.InitHullPlating()
 	ep.RestoreShield()
 	ep.CargoCapacity = 5

@@ -20,10 +20,10 @@ type CombatUnit struct {
 	Price            Price
 	OgameID          int
 	Name             string
-	HullPlating      int
-	Shield           int
-	ShieldPower      int
-	WeaponPower      int
+	HullPlating      float64
+	Shield           float64
+	ShieldPower      float64
+	WeaponPower      float64
 	ArmourTechnology int
 	WeaponTechnology int
 	ShieldTechnology int
@@ -48,18 +48,18 @@ func (ship *CombatUnit) GetRapidfireAgainst(name string) int {
 }
 
 func (ship *CombatUnit) InitHullPlating() {
-	ship.HullPlating = (1 + (ship.ArmourTechnology / 10)) * ((ship.Price.Metal + ship.Price.Crystal) / 10)
+	ship.HullPlating = (1 + (float64(ship.ArmourTechnology) / 10)) * ((float64(ship.Price.Metal) + float64(ship.Price.Crystal)) / 10)
 }
 
 func (ship *CombatUnit) GetInitialHullPlating() int {
 	return (1 + (ship.ArmourTechnology / 10)) * ((ship.Price.Metal + ship.Price.Crystal) / 10)
 }
 
-func (ship *CombatUnit) GetHullPlating() int {
+func (ship *CombatUnit) GetHullPlating() float64 {
 	return ship.HullPlating
 }
 
-func (ship *CombatUnit) SetHullPlating(hullPlating int) {
+func (ship *CombatUnit) SetHullPlating(hullPlating float64) {
 	ship.HullPlating = hullPlating
 }
 
@@ -67,15 +67,15 @@ func (ship *CombatUnit) GetName() string {
 	return ship.Name
 }
 
-func (ship *CombatUnit) GetWeapon() int {
+func (ship *CombatUnit) GetWeapon() float64 {
 	return ship.WeaponPower
 }
 
-func (ship *CombatUnit) GetShield() int {
+func (ship *CombatUnit) GetShield() float64 {
 	return ship.Shield
 }
 
-func (ship *CombatUnit) SetShield(shield int) {
+func (ship *CombatUnit) SetShield(shield float64) {
 	ship.Shield = shield
 }
 
