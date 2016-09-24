@@ -475,15 +475,9 @@ func printResult(result map[string]interface{}) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetBorders(tablewriter.Border{Left: true, Top: true, Right: true, Bottom: true})
 	data2 := [][]string{
-		[]string{
-			"Attackers win",
-			fmt.Sprintf("%d%%", result["attacker_win"])},
-		[]string{
-			"Defenders win",
-			fmt.Sprintf("%d%%", result["defender_win"])},
-		[]string{
-			"Draw",
-			fmt.Sprintf("%d%%", result["draw"])},
+		[]string{"Attackers win", fmt.Sprintf("%d%%", result["attacker_win"])},
+		[]string{"Defenders win", fmt.Sprintf("%d%%", result["defender_win"])},
+		[]string{"Draw", fmt.Sprintf("%d%%", result["draw"])},
 	}
 	table.AppendBulk(data2)
 	table.Render()
