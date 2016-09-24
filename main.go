@@ -317,7 +317,8 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 				simulator.Debris.Crystal += int(simulator.FleetToDebris * float64(unit.GetPrice().Crystal))
 			}
 			simulator.DefenderLosses.Add(unit.GetPrice())
-			simulator.Defender.Units = append(simulator.Defender.Units[:i], simulator.Defender.Units[i+1:]...)
+			simulator.Defender.Units[i] = simulator.Defender.Units[len(simulator.Defender.Units)-1]
+			simulator.Defender.Units = simulator.Defender.Units[:len(simulator.Defender.Units)-1]
 			if simulator.IsLogging {
 				fmt.Println(fmt.Sprintf("%s lost all its integrity, remove from battle", unit.GetName()))
 			}
@@ -332,7 +333,8 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 				simulator.Debris.Crystal += int(simulator.FleetToDebris * float64(unit.GetPrice().Crystal))
 			}
 			simulator.AttackerLosses.Add(unit.GetPrice())
-			simulator.Attacker.Units = append(simulator.Attacker.Units[:i], simulator.Attacker.Units[i+1:]...)
+			simulator.Attacker.Units[i] = simulator.Attacker.Units[len(simulator.Attacker.Units)-1]
+			simulator.Attacker.Units = simulator.Attacker.Units[:len(simulator.Attacker.Units)-1]
 			if simulator.IsLogging {
 				fmt.Println(fmt.Sprintf("%s lost all its integrity, remove from battle", unit.GetName()))
 			}
