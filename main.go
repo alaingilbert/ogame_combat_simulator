@@ -308,7 +308,8 @@ func isShip(unit ICombatUnit) bool {
 }
 
 func (simulator *CombatSimulator) RemoveDestroyedUnits() {
-	for i := len(simulator.Defender.Units) - 1; i >= 0; i-- {
+	l := len(simulator.Defender.Units)
+	for i := l - 1; i >= 0; i-- {
 		unit := simulator.Defender.Units[i]
 		if unit.GetHullPlating() <= 0 {
 			if isShip(unit) {
@@ -322,7 +323,8 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 			}
 		}
 	}
-	for i := len(simulator.Attacker.Units) - 1; i >= 0; i-- {
+	l = len(simulator.Attacker.Units)
+	for i := l - 1; i >= 0; i-- {
 		unit := simulator.Attacker.Units[i]
 		if unit.GetHullPlating() <= 0 {
 			if isShip(unit) {
