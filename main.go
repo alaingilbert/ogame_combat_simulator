@@ -276,10 +276,9 @@ func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []IC
 		for rapidFire {
 			targetUnit := defendingUnits[rand.Intn(len(defendingUnits))]
 			rapidFire = simulator.getAnotherShot(unit, targetUnit)
-			if targetUnit.IsDead() {
-				continue
+			if !targetUnit.IsDead() {
+				simulator.attack(unit, targetUnit)
 			}
-			simulator.attack(unit, targetUnit)
 		}
 	}
 }
