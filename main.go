@@ -26,6 +26,7 @@ func Round(val float64) int {
 
 type ICombatUnit interface {
 	IsDead() bool
+	IsAlive() bool
 	GetPrice() units.Price
 	GetName() string
 	GetInitialHullPlating() int
@@ -262,7 +263,7 @@ func (simulator *CombatSimulator) attack(attackingUnit, defendingUnit ICombatUni
 	}
 
 	// Check for explosion
-	if !defendingUnit.IsDead() {
+	if defendingUnit.IsAlive() {
 		if simulator.hasExploded(defendingUnit) {
 			defendingUnit.SetHullPlating(0)
 		}
@@ -276,7 +277,7 @@ func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []IC
 		for rapidFire {
 			targetUnit := defendingUnits[rand.Intn(len(defendingUnits))]
 			rapidFire = simulator.getAnotherShot(unit, targetUnit)
-			if !targetUnit.IsDead() {
+			if targetUnit.IsAlive() {
 				simulator.attack(unit, targetUnit)
 			}
 		}
