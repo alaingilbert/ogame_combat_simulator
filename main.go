@@ -61,6 +61,25 @@ type Entity struct {
 	Units          []ICombatUnit
 }
 
+type Attacker struct {
+	Entity
+	Combustion int
+	Impulse    int
+	Hyperspace int
+}
+
+type Defender struct {
+	Entity
+	RocketLauncher  int
+	LightLaser      int
+	HeavyLaser      int
+	GaussCannon     int
+	IonCannon       int
+	PlasmaTurret    int
+	SmallShieldDome int
+	LargeShieldDome int
+}
+
 func (e *Entity) Init() {
 	for i := 0; i < e.SmallCargo; i++ {
 		e.Units = append(e.Units, units.NewSmallCargo())
@@ -132,25 +151,6 @@ func (e *Defender) Init() {
 	for i := 0; i < e.LargeShieldDome; i++ {
 		e.Units = append(e.Units, units.NewLargeShieldDome())
 	}
-}
-
-type Attacker struct {
-	Entity
-	Combustion int
-	Impulse    int
-	Hyperspace int
-}
-
-type Defender struct {
-	Entity
-	RocketLauncher  int
-	LightLaser      int
-	HeavyLaser      int
-	GaussCannon     int
-	IonCannon       int
-	PlasmaTurret    int
-	SmallShieldDome int
-	LargeShieldDome int
 }
 
 func NewAttacker() *Attacker {
