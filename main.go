@@ -141,10 +141,6 @@ type Attacker struct {
 	Hyperspace int
 }
 
-func NewAttacker() *Attacker {
-	return new(Attacker)
-}
-
 type Defender struct {
 	Entity
 	RocketLauncher  int
@@ -155,6 +151,10 @@ type Defender struct {
 	PlasmaTurret    int
 	SmallShieldDome int
 	LargeShieldDome int
+}
+
+func NewAttacker() *Attacker {
+	return new(Attacker)
 }
 
 func NewDefender() *Defender {
