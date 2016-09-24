@@ -142,8 +142,7 @@ type Attacker struct {
 }
 
 func NewAttacker() *Attacker {
-	attacker := new(Attacker)
-	return attacker
+	return new(Attacker)
 }
 
 type Defender struct {
@@ -159,8 +158,7 @@ type Defender struct {
 }
 
 func NewDefender() *Defender {
-	defender := new(Defender)
-	return defender
+	return new(Defender)
 }
 
 type CombatSimulator struct {
