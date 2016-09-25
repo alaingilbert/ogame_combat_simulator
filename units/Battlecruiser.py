@@ -1,10 +1,4 @@
-package units
-
-type Battlecruiser struct {
-	Ship
-}
-
-func NewBattlecruiser() *Battlecruiser {
+class Battlecruiser(object):
 	bc := new(Battlecruiser)
 	bc.OgameID = 215
 	bc.Name = "Battlecruiser"
