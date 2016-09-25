@@ -4,10 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	"github.com/olekukonko/tablewriter"
-	"github.com/urfave/cli"
-	"gopkg.in/cheggaaa/pb.v1"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -16,6 +12,11 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	"github.com/cheggaaa/pb"
+	"github.com/olekukonko/tablewriter"
+	"github.com/urfave/cli"
 )
 
 func Round(val float64) int {
