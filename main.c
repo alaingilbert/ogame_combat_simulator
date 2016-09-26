@@ -140,10 +140,6 @@ CombatUnit NewUnit(int OgameID) {
   return unit;
 }
 
-int getNbUnits(const Entity *entity) {
-  return entity->TotalUnits;
-}
-
 void InitEntity(Entity *entity) {
   int nbDeathstar = entity->Deathstar;
   int nbCruiser = entity->Cruiser;
@@ -393,15 +389,13 @@ void unitsFires(Entity *attacker, Entity *defender) {
   int i;
   CombatUnit *attackingUnits = attacker->Units;
   CombatUnit *defendingUnits = defender->Units;
-  int nbUnits = getNbUnits(attacker);
-  int nbDefendingUnits = getNbUnits(defender);
-  for (i=0; i<nbUnits; i++) {
+  for (i=0; i<attacker->TotalUnits; i++) {
     CombatUnit *unit = &attackingUnits[i];
     int rapidFire = 1;
     while (rapidFire) {
       int random = 0;
-      if (nbDefendingUnits > 1) {
-        random = rand() % (nbDefendingUnits-1);
+      if (defender->TotalUnits > 1) {
+        random = rand() % (defender->TotalUnits-1);
       }
       CombatUnit *targetUnit = &defendingUnits[random];
       if (IsAlive(targetUnit)) {
