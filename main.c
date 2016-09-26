@@ -469,12 +469,48 @@ void Simulate(Entity *attacker, Entity *defender) {
 
 typedef struct {
   int SimulatorLogging;
-  int AttackerDeathstar;
-  int AttackerCruiser;
+
+  int AttackerWeapon;
+  int AttackerShield;
+  int AttackerArmour;
+  int AttackerSmallCargo;
+  int AttackerLargeCargo;
   int AttackerLightFighter;
   int AttackerHeavyFighter;
+  int AttackerCruiser;
+  int AttackerBattleship;
+  int AttackerColonyShip;
+  int AttackerRecycler;
+  int AttackerEspionageProbe;
+  int AttackerBomber;
+  int AttackerDestroyer;
+  int AttackerDeathstar;
+  int AttackerBattlecruiser;
+
+  int DefenderWeapon;
+  int DefenderShield;
+  int DefenderArmour;
+  int DefenderSmallCargo;
+  int DefenderLargeCargo;
+  int DefenderLightFighter;
+  int DefenderHeavyFighter;
+  int DefenderCruiser;
+  int DefenderBattleship;
+  int DefenderColonyShip;
+  int DefenderRecycler;
+  int DefenderEspionageProbe;
+  int DefenderBomber;
+  int DefenderSolarSatellite;
+  int DefenderDestroyer;
+  int DefenderDeathstar;
+  int DefenderBattlecruiser;
   int DefenderRocketLauncher;
+  int DefenderLightLaser;
   int DefenderHeavyLaser;
+  int DefenderGaussCannon;
+  int DefenderIonCannon;
+  int DefenderPlasmaTurret;
+  int DefenderSmallShieldDome;
   int DefenderLargeShieldDome;
 } configuration;
 
@@ -487,20 +523,89 @@ static int handler(void* user, const char* section, const char* name,
   #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
   if (MATCH("simulator", "logging")) {
     pconfig->SimulatorLogging= atoi(value);
+  } else if (MATCH("defender", "Weapon")) {
+    pconfig->DefenderWeapon = atoi(value);
+  } else if (MATCH("defender", "Shield")) {
+    pconfig->DefenderShield = atoi(value);
+  } else if (MATCH("defender", "Armour")) {
+    pconfig->DefenderArmour = atoi(value);
+  } else if (MATCH("defender", "SmallCargo")) {
+    pconfig->DefenderSmallCargo = atoi(value);
+  } else if (MATCH("defender", "LargeCargo")) {
+    pconfig->DefenderLargeCargo = atoi(value);
+  } else if (MATCH("defender", "LightFighter")) {
+    pconfig->DefenderLightFighter = atoi(value);
+  } else if (MATCH("defender", "HeavyFighter")) {
+    pconfig->DefenderHeavyFighter = atoi(value);
+  } else if (MATCH("defender", "Cruiser")) {
+    pconfig->DefenderCruiser = atoi(value);
+  } else if (MATCH("defender", "Battleship")) {
+    pconfig->DefenderBattleship = atoi(value);
+  } else if (MATCH("defender", "ColonyShip")) {
+    pconfig->DefenderColonyShip = atoi(value);
+  } else if (MATCH("defender", "Recycler")) {
+    pconfig->DefenderRecycler = atoi(value);
+  } else if (MATCH("defender", "EspionageProbe")) {
+    pconfig->DefenderEspionageProbe = atoi(value);
+  } else if (MATCH("defender", "Bomber")) {
+    pconfig->DefenderBomber = atoi(value);
+  } else if (MATCH("defender", "SolarSatellite")) {
+    pconfig->DefenderSolarSatellite = atoi(value);
+  } else if (MATCH("defender", "Destroyer")) {
+    pconfig->DefenderDestroyer = atoi(value);
+  } else if (MATCH("defender", "Deathstar")) {
+    pconfig->DefenderDeathstar = atoi(value);
+  } else if (MATCH("defender", "Battlecruiser")) {
+    pconfig->DefenderBattlecruiser = atoi(value);
   } else if (MATCH("defender", "RocketLauncher")) {
     pconfig->DefenderRocketLauncher = atoi(value);
+  } else if (MATCH("defender", "LightLaser")) {
+    pconfig->DefenderLightLaser = atoi(value);
   } else if (MATCH("defender", "HeavyLaser")) {
     pconfig->DefenderHeavyLaser = atoi(value);
+  } else if (MATCH("defender", "GaussCannon")) {
+    pconfig->DefenderGaussCannon = atoi(value);
+  } else if (MATCH("defender", "IonCannon")) {
+    pconfig->DefenderIonCannon = atoi(value);
+  } else if (MATCH("defender", "PlasmaTurret")) {
+    pconfig->DefenderPlasmaTurret = atoi(value);
+  } else if (MATCH("defender", "SmallShieldDome")) {
+    pconfig->DefenderSmallShieldDome = atoi(value);
   } else if (MATCH("defender", "LargeShieldDome")) {
     pconfig->DefenderLargeShieldDome = atoi(value);
-  } else if (MATCH("attacker", "Deathstar")) {
-    pconfig->AttackerDeathstar = atoi(value);
-  } else if (MATCH("attacker", "Cruiser")) {
-    pconfig->AttackerCruiser = atoi(value);
+
+  } else if (MATCH("attacker", "Weapon")) {
+    pconfig->AttackerWeapon = atoi(value);
+  } else if (MATCH("attacker", "Shield")) {
+    pconfig->AttackerShield = atoi(value);
+  } else if (MATCH("attacker", "Armour")) {
+    pconfig->AttackerArmour = atoi(value);
+  } else if (MATCH("attacker", "SmallCargo")) {
+    pconfig->AttackerSmallCargo = atoi(value);
+  } else if (MATCH("attacker", "LargeCargo")) {
+    pconfig->AttackerLargeCargo = atoi(value);
   } else if (MATCH("attacker", "LightFighter")) {
     pconfig->AttackerLightFighter = atoi(value);
   } else if (MATCH("attacker", "HeavyFighter")) {
     pconfig->AttackerHeavyFighter = atoi(value);
+  } else if (MATCH("attacker", "Cruiser")) {
+    pconfig->AttackerCruiser = atoi(value);
+  } else if (MATCH("attacker", "Battleship")) {
+    pconfig->AttackerBattleship = atoi(value);
+  } else if (MATCH("attacker", "ColonyShip")) {
+    pconfig->AttackerColonyShip = atoi(value);
+  } else if (MATCH("attacker", "Recycler")) {
+    pconfig->AttackerRecycler = atoi(value);
+  } else if (MATCH("attacker", "EspionageProbe")) {
+    pconfig->AttackerEspionageProbe = atoi(value);
+  } else if (MATCH("attacker", "Bomber")) {
+    pconfig->AttackerBomber = atoi(value);
+  } else if (MATCH("attacker", "Destroyer")) {
+    pconfig->AttackerDestroyer = atoi(value);
+  } else if (MATCH("attacker", "Deathstar")) {
+    pconfig->AttackerDeathstar = atoi(value);
+  } else if (MATCH("attacker", "Battlecruiser")) {
+    pconfig->AttackerBattlecruiser = atoi(value);
   } else {
     return 0;  /* unknown section/name, error */
   }
