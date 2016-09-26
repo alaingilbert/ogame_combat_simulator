@@ -481,6 +481,9 @@ typedef struct {
   int AttackerWeapon;
   int AttackerShield;
   int AttackerArmour;
+  int AttackerCombustion;
+  int AttackerImpulse;
+  int AttackerHyperspace;
   int AttackerSmallCargo;
   int AttackerLargeCargo;
   int AttackerLightFighter;
@@ -588,6 +591,12 @@ static int handler(void* user, const char* section, const char* name,
     pconfig->AttackerShield = atoi(value);
   } else if (MATCH("attacker", "Armour")) {
     pconfig->AttackerArmour = atoi(value);
+  } else if (MATCH("attacker", "Combustion")) {
+    pconfig->AttackerCombustion = atoi(value);
+  } else if (MATCH("attacker", "Impulse")) {
+    pconfig->AttackerImpulse = atoi(value);
+  } else if (MATCH("attacker", "Hyperspace")) {
+    pconfig->AttackerHyperspace = atoi(value);
   } else if (MATCH("attacker", "SmallCargo")) {
     pconfig->AttackerSmallCargo = atoi(value);
   } else if (MATCH("attacker", "LargeCargo")) {
@@ -634,20 +643,68 @@ int main(int argc, char *argv[]) {
   Entity *defender = malloc(sizeof(Entity));
   Entity *attacker = malloc(sizeof(Entity));
 
-  attacker->Deathstar = config.AttackerDeathstar;
-  attacker->Cruiser = config.AttackerCruiser;
-  attacker->LightFighter = config.AttackerLightFighter;
-  attacker->HeavyFighter = config.AttackerHeavyFighter;
-  attacker->HeavyLaser = 0;
-  attacker->RocketLauncher = 0;
+  // Attacker
+  attacker->Weapon          = config.AttackerWeapon;
+  attacker->Shield          = config.AttackerShield;
+  attacker->Armour          = config.AttackerArmour;
+  attacker->Combustion      = config.AttackerCombustion;
+  attacker->Impulse         = config.AttackerImpulse;
+  attacker->Hyperspace      = config.AttackerHyperspace;
+
+  attacker->SmallCargo      = config.AttackerSmallCargo;
+  attacker->LargeCargo      = config.AttackerLargeCargo;
+  attacker->LightFighter    = config.AttackerLightFighter;
+  attacker->HeavyFighter    = config.AttackerHeavyFighter;
+  attacker->Cruiser         = config.AttackerCruiser;
+  attacker->Battleship      = config.AttackerBattleship;
+  attacker->ColonyShip      = config.AttackerColonyShip;
+  attacker->Recycler        = config.AttackerRecycler;
+  attacker->EspionageProbe  = config.AttackerEspionageProbe;
+  attacker->Bomber          = config.AttackerBomber;
+  attacker->SolarSatellite  = 0;
+  attacker->Destroyer       = config.AttackerDestroyer;
+  attacker->Deathstar       = config.AttackerDeathstar;
+  attacker->Battlecruiser   = config.AttackerBattlecruiser;
+
+  attacker->RocketLauncher  = 0;
+  attacker->LightLaser      = 0;
+  attacker->HeavyLaser      = 0;
+  attacker->GaussCannon     = 0;
+  attacker->IonCannon       = 0;
+  attacker->PlasmaTurret    = 0;
+  attacker->SmallShieldDome = 0;
   attacker->LargeShieldDome = 0;
 
-  defender->Deathstar = 0;
-  defender->Cruiser = 0;
-  defender->LightFighter = 0;
-  defender->HeavyFighter = 0;
-  defender->HeavyLaser = config.DefenderHeavyLaser;
-  defender->RocketLauncher = config.DefenderRocketLauncher;
+  // Defender
+  defender->Weapon          = config.DefenderWeapon;
+  defender->Shield          = config.DefenderShield;
+  defender->Armour          = config.DefenderArmour;
+  defender->Combustion      = 0;
+  defender->Impulse         = 0;
+  defender->Hyperspace      = 0;
+
+  defender->SmallCargo      = config.DefenderSmallCargo;
+  defender->LargeCargo      = config.DefenderLargeCargo;
+  defender->LightFighter    = config.DefenderLightFighter;
+  defender->HeavyFighter    = config.DefenderHeavyFighter;
+  defender->Cruiser         = config.DefenderCruiser;
+  defender->Battleship      = config.DefenderBattleship;
+  defender->ColonyShip      = config.DefenderColonyShip;
+  defender->Recycler        = config.DefenderRecycler;
+  defender->EspionageProbe  = config.DefenderEspionageProbe;
+  defender->Bomber          = config.DefenderBomber;
+  defender->SolarSatellite  = config.DefenderSolarSatellite;
+  defender->Destroyer       = config.DefenderDestroyer;
+  defender->Deathstar       = config.DefenderDeathstar;
+  defender->Battlecruiser   = config.DefenderBattlecruiser;
+
+  defender->RocketLauncher  = config.DefenderRocketLauncher;
+  defender->LightLaser      = config.DefenderLightLaser;
+  defender->HeavyLaser      = config.DefenderHeavyLaser;
+  defender->GaussCannon     = config.DefenderGaussCannon;
+  defender->IonCannon       = config.DefenderIonCannon;
+  defender->PlasmaTurret    = config.DefenderPlasmaTurret;
+  defender->SmallShieldDome = config.DefenderSmallShieldDome;
   defender->LargeShieldDome = config.DefenderLargeShieldDome;
 
   Simulate(attacker, defender);
