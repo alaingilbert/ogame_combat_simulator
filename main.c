@@ -133,13 +133,17 @@ int getNbDefendingUnits(const Entity *defender) {
   return defender->TotalUnits;
 }
 
-void InitAttacker(Entity *attacker) {
-  int nbDeathstar = attacker->Deathstar;
-  int nbCruiser = attacker->Cruiser;
-  int nbLightFighter = attacker->LightFighter;
-  int nbHeavyFighter = attacker->HeavyFighter;
-  attacker->TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
-  int nbUnits = getNbAttackingUnits(attacker);
+void InitEntity(Entity *entity) {
+  int nbDeathstar = entity->Deathstar;
+  int nbCruiser = entity->Cruiser;
+  int nbLightFighter = entity->LightFighter;
+  int nbHeavyFighter = entity->HeavyFighter;
+  int nbLargeShieldDome = entity->LargeShieldDome;
+  int nbHeavyLaser = entity->HeavyLaser;
+  int nbRocketLauncher = entity->RocketLauncher;
+  entity->TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
+  entity->TotalUnits += nbLargeShieldDome + nbHeavyLaser + nbRocketLauncher;
+  int nbUnits = getNbAttackingUnits(entity);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
   int idx = 0;
@@ -151,25 +155,13 @@ void InitAttacker(Entity *attacker) {
     units[idx++] = NewUnit(204);
   for (i=0; i<nbHeavyFighter; i++)
     units[idx++] = NewUnit(205);
-  attacker->Units = units;
-}
-
-void InitDefender(Entity *defender) {
-  int nbLargeShieldDome = defender->LargeShieldDome;
-  int nbHeavyLaser = defender->HeavyLaser;
-  int nbRocketLauncher = defender->RocketLauncher;
-  defender->TotalUnits = nbRocketLauncher + nbHeavyLaser + nbLargeShieldDome;
-  int nbUnits = getNbDefendingUnits(defender);
-  CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
-  int i;
-  int idx = 0;
   for (i=0; i<nbRocketLauncher; i++)
     units[idx++] = NewUnit(401);
   for (i=0; i<nbHeavyLaser; i++)
     units[idx++] = NewUnit(403);
   for (i=0; i<nbLargeShieldDome; i++)
     units[idx++] = NewUnit(408);
-  defender->Units = units;
+  entity->Units = units;
 }
 
 int IsAlive(CombatUnit *unit) {
@@ -491,8 +483,8 @@ void PrintWinner(Entity *attacker, Entity *defender) {
 }
 
 void Simulate(Entity *attacker, Entity *defender) {
-  InitDefender(defender);
-  InitAttacker(attacker);
+  InitEntity(defender);
+  InitEntity(attacker);
   int i;
   for (i=0; i<6; i++) {
     if (SHOULD_LOG) {
