@@ -422,19 +422,11 @@ void RemoveDestroyedUnits(Entity *attacker, Entity *defender) {
   }
 }
 
-void RestoreShields(Entity *attacker, Entity *defender) {
+void RestoreShields(Entity *entity) {
   int i;
-  int l = attacker->TotalUnits;
+  int l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &attacker->Units[i];
-    unit->Shield = unit->ShieldPower * (1 + 0.1*0);
-    if (SHOULD_LOG) {
-      printf("%s still has integrity, restore its shield\n", UnitToString(unit));
-    }
-  }
-  l = defender->TotalUnits;
-  for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &defender->Units[i];
+    CombatUnit *unit = &entity->Units[i];
     unit->Shield = unit->ShieldPower * (1 + 0.1*0);
     if (SHOULD_LOG) {
       printf("%s still has integrity, restore its shield\n", UnitToString(unit));
@@ -465,7 +457,8 @@ void Simulate(Entity *attacker, Entity *defender) {
     unitsFires(attacker, defender);
     unitsFires(defender, attacker);
     RemoveDestroyedUnits(attacker, defender);
-    RestoreShields(attacker, defender);
+    RestoreShields(attacker);
+    RestoreShields(defender);
     if (IsCombatDone(attacker, defender)) {
       break;
     }
