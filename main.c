@@ -29,6 +29,7 @@ typedef struct {
   int Deathstar;
   int Cruiser;
   int LightFighter;
+  int HeavyFighter;
   int TotalUnits;
   CombatUnit *Units;
 } Entity;
@@ -83,6 +84,10 @@ CombatUnit NewUnit(int OgameID) {
     unit.ShieldPower = 10;
     unit.WeaponPower = 50;
     unit.Price = NewPrice(3000, 1000, 0);
+  } else if (OgameID == 205) { // HeavyFighter
+    unit.ShieldPower = 25;
+    unit.WeaponPower = 150;
+    unit.Price = NewPrice(6000, 4000, 0);
   }
   unit.HullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
   unit.Shield = unit.ShieldPower * (1 + 0.1*0);
@@ -101,7 +106,8 @@ void InitAttacker(Attacker *attacker) {
   int nbDeathstar = attacker->entity.Deathstar;
   int nbCruiser = attacker->entity.Cruiser;
   int nbLightFighter = attacker->entity.LightFighter;
-  attacker->entity.TotalUnits = nbDeathstar + nbCruiser + nbLightFighter;
+  int nbHeavyFighter = attacker->entity.HeavyFighter;
+  attacker->entity.TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
   int nbUnits = getNbAttackingUnits(attacker);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
@@ -112,6 +118,8 @@ void InitAttacker(Attacker *attacker) {
     units[idx++] = NewUnit(206);
   for (i=0; i<nbLightFighter; i++)
     units[idx++] = NewUnit(204);
+  for (i=0; i<nbHeavyFighter; i++)
+    units[idx++] = NewUnit(205);
   attacker->entity.Units = units;
 }
 
@@ -381,6 +389,7 @@ typedef struct {
   int AttackerDeathstar;
   int AttackerCruiser;
   int AttackerLightFighter;
+  int AttackerHeavyFighter;
   int DefenderRocketLauncher;
   int DefenderHeavyLaser;
   int DefenderLargeShieldDome;
@@ -407,6 +416,8 @@ static int handler(void* user, const char* section, const char* name,
     pconfig->AttackerCruiser = atoi(value);
   } else if (MATCH("attacker", "LightFighter")) {
     pconfig->AttackerLightFighter = atoi(value);
+  } else if (MATCH("attacker", "HeavyFighter")) {
+    pconfig->AttackerHeavyFighter = atoi(value);
   } else {
     return 0;  /* unknown section/name, error */
   }
@@ -430,6 +441,7 @@ int main(int argc, char *argv[]) {
   attacker->entity.Deathstar = config.AttackerDeathstar;
   attacker->entity.Cruiser = config.AttackerCruiser;
   attacker->entity.LightFighter = config.AttackerLightFighter;
+  attacker->entity.HeavyFighter = config.AttackerHeavyFighter;
 
   defender->entity.Deathstar = 0;
   defender->entity.Cruiser = 0;
