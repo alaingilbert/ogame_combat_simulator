@@ -618,7 +618,9 @@ void RestoreShields(Entity *entity) {
 }
 
 void PrintWinner(Entity *attacker, Entity *defender) {
-  if (defender->TotalUnits <= 0) {
+  if (defender->TotalUnits <= 0 && attacker->TotalUnits <= 0) {
+    printf("Draw\n");
+  } else if (defender->TotalUnits <= 0) {
     printf("Attacker win\n");
   } else if (attacker->TotalUnits <= 0) {
     printf("Defender win\n");
