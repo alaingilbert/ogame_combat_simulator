@@ -538,9 +538,14 @@ int main(int argc, char *argv[]) {
   attacker->Cruiser = config.AttackerCruiser;
   attacker->LightFighter = config.AttackerLightFighter;
   attacker->HeavyFighter = config.AttackerHeavyFighter;
+  attacker->HeavyLaser = 0;
+  attacker->RocketLauncher = 0;
+  attacker->LargeShieldDome = 0;
 
   defender->Deathstar = 0;
   defender->Cruiser = 0;
+  defender->LightFighter = 0;
+  defender->HeavyFighter = 0;
   defender->HeavyLaser = config.DefenderHeavyLaser;
   defender->RocketLauncher = config.DefenderRocketLauncher;
   defender->LargeShieldDome = config.DefenderLargeShieldDome;
