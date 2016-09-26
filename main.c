@@ -913,12 +913,19 @@ int main(int argc, char *argv[]) {
   ConfigDefender(defender, &config);
 
   Simulator *simulator = malloc(sizeof(Simulator));
-  simulator->Debris = NewPrice(0, 0, 0);
   simulator->FleetToDebris = 0.3;
   simulator->MaxRounds = 6;
   simulator->Attacker = attacker;
   simulator->Defender = defender;
-  Simulate(simulator);
+
+  int i;
+  for (i=0; i<nbSimulations; i++) {
+    simulator->Rounds = 0;
+    simulator->Debris = NewPrice(0, 0, 0);
+    Simulate(simulator);
+    free(attacker->Units);
+    free(defender->Units);
+  }
 
   printf("Attacker losses: %d, %d, %d\n",
       simulator->Attacker->Losses.Metal,
@@ -933,8 +940,6 @@ int main(int argc, char *argv[]) {
       simulator->Debris.Crystal,
       simulator->Debris.Deuterium);
 
-  free(attacker->Units);
-  free(defender->Units);
   free(attacker);
   free(defender);
   free(simulator);
