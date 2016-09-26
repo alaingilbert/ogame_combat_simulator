@@ -141,32 +141,79 @@ CombatUnit NewUnit(int OgameID) {
 }
 
 void InitEntity(Entity *entity) {
-  int nbDeathstar = entity->Deathstar;
-  int nbCruiser = entity->Cruiser;
-  int nbLightFighter = entity->LightFighter;
-  int nbHeavyFighter = entity->HeavyFighter;
-  int nbLargeShieldDome = entity->LargeShieldDome;
-  int nbHeavyLaser = entity->HeavyLaser;
-  int nbRocketLauncher = entity->RocketLauncher;
-  entity->TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
-  entity->TotalUnits += nbLargeShieldDome + nbHeavyLaser + nbRocketLauncher;
+  entity->TotalUnits = 0;
+  entity->TotalUnits += entity->SmallCargo;
+  entity->TotalUnits += entity->LargeCargo;
+  entity->TotalUnits += entity->LightFighter;
+  entity->TotalUnits += entity->HeavyFighter;
+  entity->TotalUnits += entity->Cruiser;
+  entity->TotalUnits += entity->Battleship;
+  entity->TotalUnits += entity->ColonyShip;
+  entity->TotalUnits += entity->Recycler;
+  entity->TotalUnits += entity->EspionageProbe;
+  entity->TotalUnits += entity->Bomber;
+  entity->TotalUnits += entity->SolarSatellite;
+  entity->TotalUnits += entity->Destroyer;
+  entity->TotalUnits += entity->Deathstar;
+  entity->TotalUnits += entity->Battlecruiser;
+  entity->TotalUnits += entity->RocketLauncher;
+  entity->TotalUnits += entity->LightLaser;
+  entity->TotalUnits += entity->HeavyLaser;
+  entity->TotalUnits += entity->GaussCannon;
+  entity->TotalUnits += entity->IonCannon;
+  entity->TotalUnits += entity->PlasmaTurret;
+  entity->TotalUnits += entity->SmallShieldDome;
+  entity->TotalUnits += entity->LargeShieldDome;
+
   CombatUnit *units = malloc(sizeof(CombatUnit) * entity->TotalUnits);
   int i;
   int idx = 0;
-  for (i=0; i<nbDeathstar; i++)
-    units[idx++] = NewUnit(DEATHSTAR);
-  for (i=0; i<nbCruiser; i++)
-    units[idx++] = NewUnit(CRUISER);
-  for (i=0; i<nbLightFighter; i++)
+
+  for (i=0; i<entity->SmallCargo; i++)
+    units[idx++] = NewUnit(SMALL_CARGO);
+  for (i=0; i<entity->LargeCargo; i++)
+    units[idx++] = NewUnit(LARGE_CARGO);
+  for (i=0; i<entity->LightFighter; i++)
     units[idx++] = NewUnit(LIGHT_FIGHTER);
-  for (i=0; i<nbHeavyFighter; i++)
+  for (i=0; i<entity->HeavyFighter; i++)
     units[idx++] = NewUnit(HEAVY_FIGHTER);
-  for (i=0; i<nbRocketLauncher; i++)
+  for (i=0; i<entity->Cruiser; i++)
+    units[idx++] = NewUnit(CRUISER);
+  for (i=0; i<entity->Battleship; i++)
+    units[idx++] = NewUnit(BATTLESHIP);
+  for (i=0; i<entity->ColonyShip; i++)
+    units[idx++] = NewUnit(COLONY_SHIP);
+  for (i=0; i<entity->Recycler; i++)
+    units[idx++] = NewUnit(RECYCLER);
+  for (i=0; i<entity->EspionageProbe; i++)
+    units[idx++] = NewUnit(ESPIONAGE_PROBE);
+  for (i=0; i<entity->Bomber; i++)
+    units[idx++] = NewUnit(BOMBER);
+  for (i=0; i<entity->SolarSatellite; i++)
+    units[idx++] = NewUnit(SOLAR_SATELLITE);
+  for (i=0; i<entity->Destroyer; i++)
+    units[idx++] = NewUnit(DESTROYER);
+  for (i=0; i<entity->Deathstar; i++)
+    units[idx++] = NewUnit(DEATHSTAR);
+  for (i=0; i<entity->Battlecruiser; i++)
+    units[idx++] = NewUnit(BATTLECRUISER);
+  for (i=0; i<entity->RocketLauncher; i++)
     units[idx++] = NewUnit(ROCKET_LAUNCHER);
-  for (i=0; i<nbHeavyLaser; i++)
+  for (i=0; i<entity->LightLaser; i++)
+    units[idx++] = NewUnit(LIGHT_LASER);
+  for (i=0; i<entity->HeavyLaser; i++)
     units[idx++] = NewUnit(HEAVY_LASER);
-  for (i=0; i<nbLargeShieldDome; i++)
+  for (i=0; i<entity->GaussCannon; i++)
+    units[idx++] = NewUnit(GAUSS_CANNON);
+  for (i=0; i<entity->IonCannon; i++)
+    units[idx++] = NewUnit(ION_CANNON);
+  for (i=0; i<entity->PlasmaTurret; i++)
+    units[idx++] = NewUnit(PLASMA_TURRET);
+  for (i=0; i<entity->SmallShieldDome; i++)
+    units[idx++] = NewUnit(SMALL_SHIELD_DOME);
+  for (i=0; i<entity->LargeShieldDome; i++)
     units[idx++] = NewUnit(LARGE_SHIELD_DOME);
+
   entity->Units = units;
 }
 
