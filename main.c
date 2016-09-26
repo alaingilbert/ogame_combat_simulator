@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 #include "./ini.h"
 
-int SHOULD_LOG = 0;
+bool SHOULD_LOG = false;
 
 typedef enum {
   SMALL_CARGO       = 202,
@@ -292,7 +293,7 @@ void InitEntity(Entity *entity) {
   entity->Units = units;
 }
 
-int IsAlive(CombatUnit *unit) {
+bool IsAlive(CombatUnit *unit) {
   return unit->HullPlating > 0;
 }
 
@@ -314,8 +315,8 @@ char *UnitToString(CombatUnit *unit) {
   return msg;
 }
 
-int HasExploded(CombatUnit *unit) {
-  int exploded = 0;
+bool HasExploded(CombatUnit *unit) {
+  bool exploded = false;
   float hullPercentage = (float)unit->HullPlating / (float)GetInitialHullPlating(unit);
   if (hullPercentage <= 0.7) {
     float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)GetInitialHullPlating(unit);
@@ -324,7 +325,7 @@ int HasExploded(CombatUnit *unit) {
       printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding);
     }
     if (dice >= 1-probabilityOfExploding) {
-      exploded = 1;
+      exploded = true;
       if (SHOULD_LOG) {
         printf("unit exploded.\n");
       }
@@ -534,7 +535,7 @@ void unitsFires(Entity *attacker, Entity *defender) {
   }
 }
 
-int IsCombatDone(Entity *attacker, Entity *defender) {
+bool IsCombatDone(Entity *attacker, Entity *defender) {
   return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
 
