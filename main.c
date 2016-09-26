@@ -97,8 +97,6 @@ typedef struct {
   float FleetToDebris;
   Entity *Attacker;
   Entity *Defender;
-  Price AttackerLosses;
-  Price DefenderLosses;
   Price Debris;
 } Simulator;
 
@@ -561,17 +559,48 @@ void AddLosses(Price *losses, const Price price) {
   losses->Deuterium += price.Deuterium;
 }
 
-void RemoveDestroyedUnits(Entity *entity) {
+bool IsShip(CombatUnit *unit) {
+  switch(unit->OgameID) {
+    case SMALL_CARGO:
+    case LARGE_CARGO:
+    case LIGHT_FIGHTER:
+    case HEAVY_FIGHTER:
+    case CRUISER:
+    case BATTLESHIP:
+    case COLONY_SHIP:
+    case RECYCLER:
+    case ESPIONAGE_PROBE:
+    case BOMBER:
+    case SOLAR_SATELLITE:
+    case DESTROYER:
+    case DEATHSTAR:
+    case BATTLECRUISER:
+      return true;
+    default:
+      return false;
+  }
+}
+
+void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
   int i;
   int l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
+    if (IsShip(unit)) {
+      simulator->Debris.Metal += simulator->FleetToDebris * unit->Price.Metal;
+      simulator->Debris.Crystal += simulator->FleetToDebris * unit->Price.Crystal;
+    }
     if (unit->HullPlating <= 0) {
       AddLosses(&entity->Losses, unit->Price);
       entity->Units[i] = entity->Units[entity->TotalUnits-1];
       entity->TotalUnits--;
     }
   }
+}
+
+void RemoveDestroyedUnits(Simulator *simulator) {
+  RemoveEntityDestroyedUnits(simulator, simulator->Attacker);
+  RemoveEntityDestroyedUnits(simulator, simulator->Defender);
 }
 
 void RestoreShields(Entity *entity) {
@@ -598,7 +627,9 @@ void PrintWinner(Entity *attacker, Entity *defender) {
   }
 }
 
-void Simulate(Entity *attacker, Entity *defender) {
+void Simulate(Simulator *simulator) {
+  Entity *attacker = simulator->Attacker;
+  Entity *defender = simulator->Defender;
   InitEntity(defender);
   InitEntity(attacker);
   int currentRound;
@@ -610,8 +641,7 @@ void Simulate(Entity *attacker, Entity *defender) {
     }
     unitsFires(attacker, defender);
     unitsFires(defender, attacker);
-    RemoveDestroyedUnits(attacker);
-    RemoveDestroyedUnits(defender);
+    RemoveDestroyedUnits(simulator);
     RestoreShields(attacker);
     RestoreShields(defender);
     if (IsCombatDone(attacker, defender)) {
@@ -858,12 +888,18 @@ int main(int argc, char *argv[]) {
   defender->SmallShieldDome = config.DefenderSmallShieldDome;
   defender->LargeShieldDome = config.DefenderLargeShieldDome;
 
-  Simulate(attacker, defender);
+  Simulator *simulator = malloc(sizeof(Simulator));
+  simulator->Debris = NewPrice(0, 0, 0);
+  simulator->FleetToDebris = 0.3;
+  simulator->Attacker = attacker;
+  simulator->Defender = defender;
+  Simulate(simulator);
 
   free(attacker->Units);
   free(defender->Units);
   free(attacker);
   free(defender);
+  free(simulator);
 
   return 0;
 }
