@@ -754,6 +754,7 @@ static int handler(void* user, const char* section, const char* name,
 }
 
 int main(int argc, char *argv[]) {
+  srand(time(NULL));
   configuration config;
 
   if (ini_parse("test.ini", handler, &config) < 0) {
@@ -763,7 +764,6 @@ int main(int argc, char *argv[]) {
 
   SHOULD_LOG = config.SimulatorLogging;
 
-  srand(time(NULL));
   Entity *defender = malloc(sizeof(Entity));
   Entity *attacker = malloc(sizeof(Entity));
 
