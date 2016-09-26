@@ -522,10 +522,7 @@ void unitsFires(Entity *attacker, Entity *defender) {
     CombatUnit *unit = &attackingUnits[i];
     bool rapidFire = true;
     while (rapidFire) {
-      int random = 0;
-      if (defender->TotalUnits > 1) {
-        random = rand() % (defender->TotalUnits-1);
-      }
+      int random = rand() % defender->TotalUnits;
       CombatUnit *targetUnit = &defendingUnits[random];
       if (IsAlive(targetUnit)) {
         Attack(unit, targetUnit);
