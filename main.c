@@ -433,12 +433,12 @@ void RestoreShields(Entity *entity) {
   int l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
-    unit->Shield = unit->ShieldPower * (1 + 0.1*0);
     if (SHOULD_LOG) {
       char *unitString = UnitToString(unit);
       printf("%s still has integrity, restore its shield\n", unitString);
       free(unitString);
     }
+    unit->Shield = unit->ShieldPower * (1 + 0.1*0);
   }
 }
 
