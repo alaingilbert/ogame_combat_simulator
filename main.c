@@ -633,7 +633,7 @@ void Simulate(Simulator *simulator) {
   InitEntity(defender);
   InitEntity(attacker);
   int currentRound;
-  for (currentRound=1; currentRound<=6; currentRound++) {
+  for (currentRound=1; currentRound<=simulator->MaxRounds; currentRound++) {
     if (SHOULD_LOG) {
       printf("-------------\n");
       printf("ROUND %d\n", currentRound);
@@ -891,6 +891,7 @@ int main(int argc, char *argv[]) {
   Simulator *simulator = malloc(sizeof(Simulator));
   simulator->Debris = NewPrice(0, 0, 0);
   simulator->FleetToDebris = 0.3;
+  simulator->MaxRounds = 6;
   simulator->Attacker = attacker;
   simulator->Defender = defender;
   Simulate(simulator);
