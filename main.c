@@ -28,6 +28,7 @@ typedef struct {
   int Armour;
   int Deathstar;
   int Cruiser;
+  int LightFighter;
   int TotalUnits;
   CombatUnit *Units;
 } Entity;
@@ -36,6 +37,7 @@ typedef struct {
   Entity entity;
   int RocketLauncher;
   int HeavyLaser;
+  int LargeShieldDome;
 } Defender;
 
 typedef struct {
@@ -73,6 +75,14 @@ CombatUnit NewUnit(int OgameID) {
     unit.ShieldPower = 100;
     unit.WeaponPower = 250;
     unit.Price = NewPrice(6000, 2000, 0);
+  } else if (OgameID == 408) { // LargeShieldDome
+    unit.ShieldPower = 10000;
+    unit.WeaponPower = 1;
+    unit.Price = NewPrice(50000, 50000, 0);
+  } else if (OgameID == 204) { // LightFighter
+    unit.ShieldPower = 10;
+    unit.WeaponPower = 50;
+    unit.Price = NewPrice(3000, 1000, 0);
   }
   unit.HullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
   unit.Shield = unit.ShieldPower * (1 + 0.1*0);
@@ -90,34 +100,36 @@ int getNbDefendingUnits(const Defender *defender) {
 void InitAttacker(Attacker *attacker) {
   int nbDeathstar = attacker->entity.Deathstar;
   int nbCruiser = attacker->entity.Cruiser;
-  attacker->entity.TotalUnits = nbDeathstar + nbCruiser;
+  int nbLightFighter = attacker->entity.LightFighter;
+  attacker->entity.TotalUnits = nbDeathstar + nbCruiser + nbLightFighter;
   int nbUnits = getNbAttackingUnits(attacker);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
   int idx = 0;
-  for (i=0; i<nbDeathstar; i++) {
+  for (i=0; i<nbDeathstar; i++)
     units[idx++] = NewUnit(214);
-  }
-  for (i=0; i<nbCruiser; i++) {
+  for (i=0; i<nbCruiser; i++)
     units[idx++] = NewUnit(206);
-  }
+  for (i=0; i<nbLightFighter; i++)
+    units[idx++] = NewUnit(204);
   attacker->entity.Units = units;
 }
 
 void InitDefender(Defender *defender) {
+  int nbLargeShieldDome = defender->LargeShieldDome;
   int nbHeavyLaser = defender->HeavyLaser;
   int nbRocketLauncher = defender->RocketLauncher;
-  defender->entity.TotalUnits = nbRocketLauncher + nbHeavyLaser;
+  defender->entity.TotalUnits = nbRocketLauncher + nbHeavyLaser + nbLargeShieldDome;
   int nbUnits = getNbDefendingUnits(defender);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
   int idx = 0;
-  for (i=0; i<nbRocketLauncher; i++) {
+  for (i=0; i<nbRocketLauncher; i++)
     units[idx++] = NewUnit(401);
-  }
-  for (i=0; i<nbHeavyLaser; i++) {
+  for (i=0; i<nbHeavyLaser; i++)
     units[idx++] = NewUnit(403);
-  }
+  for (i=0; i<nbLargeShieldDome; i++)
+    units[idx++] = NewUnit(408);
   defender->entity.Units = units;
 }
 
@@ -170,12 +182,12 @@ int HasExploded(CombatUnit *unit) {
 }
 
 int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
-  if (unit->OgameID == 206) {
-    if (targetUnit->OgameID == 401) {
+  if (unit->OgameID == 206) { // Cruiser
+    if (targetUnit->OgameID == 401) { // RocketLauncher
       return 10;
     }
-  } else if (unit->OgameID == 214) {
-    if (targetUnit->OgameID == 401) {
+  } else if (unit->OgameID == 214) { // Deathstar
+    if (targetUnit->OgameID == 401) { // RocketLauncher
       return 200;
     }
   }
@@ -368,8 +380,10 @@ typedef struct {
   int SimulatorLogging;
   int AttackerDeathstar;
   int AttackerCruiser;
+  int AttackerLightFighter;
   int DefenderRocketLauncher;
   int DefenderHeavyLaser;
+  int DefenderLargeShieldDome;
 } configuration;
 
 
@@ -385,10 +399,14 @@ static int handler(void* user, const char* section, const char* name,
     pconfig->DefenderRocketLauncher = atoi(value);
   } else if (MATCH("defender", "HeavyLaser")) {
     pconfig->DefenderHeavyLaser = atoi(value);
+  } else if (MATCH("defender", "LargeShieldDome")) {
+    pconfig->DefenderLargeShieldDome = atoi(value);
   } else if (MATCH("attacker", "Deathstar")) {
     pconfig->AttackerDeathstar = atoi(value);
   } else if (MATCH("attacker", "Cruiser")) {
     pconfig->AttackerCruiser = atoi(value);
+  } else if (MATCH("attacker", "LightFighter")) {
+    pconfig->AttackerLightFighter = atoi(value);
   } else {
     return 0;  /* unknown section/name, error */
   }
@@ -411,11 +429,13 @@ int main(int argc, char *argv[]) {
 
   attacker->entity.Deathstar = config.AttackerDeathstar;
   attacker->entity.Cruiser = config.AttackerCruiser;
+  attacker->entity.LightFighter = config.AttackerLightFighter;
 
   defender->entity.Deathstar = 0;
   defender->entity.Cruiser = 0;
   defender->HeavyLaser = config.DefenderHeavyLaser;
   defender->RocketLauncher = config.DefenderRocketLauncher;
+  defender->LargeShieldDome = config.DefenderLargeShieldDome;
 
   Simulate(attacker, defender);
   return 0;
