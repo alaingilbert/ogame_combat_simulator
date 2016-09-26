@@ -48,30 +48,28 @@ typedef struct {
 } CombatUnit;
 
 typedef struct {
+  // Technos
   int Weapon;
   int Shield;
   int Armour;
+  int Combustion;
+  int Impulse;
+  int Hyperspace;
+
+  // Ships
   int Deathstar;
   int Cruiser;
   int LightFighter;
   int HeavyFighter;
-  int TotalUnits;
-  CombatUnit *Units;
-} Entity;
 
-typedef struct {
-  Entity entity;
+  // Defences
   int RocketLauncher;
   int HeavyLaser;
   int LargeShieldDome;
-} Defender;
 
-typedef struct {
-  Entity entity;
-  int Combustion;
-  int Impulse;
-  int Hyperspace;
-} Attacker;
+  int TotalUnits;
+  CombatUnit *Units;
+} Entity;
 
 Price NewPrice(int metal, int crystal, int deuterium) {
   Price price;
@@ -127,20 +125,20 @@ CombatUnit NewUnit(int OgameID) {
   return unit;
 }
 
-int getNbAttackingUnits(const Attacker *attacker) {
-  return attacker->entity.TotalUnits;
+int getNbAttackingUnits(const Entity *attacker) {
+  return attacker->TotalUnits;
 }
 
-int getNbDefendingUnits(const Defender *defender) {
-  return defender->entity.TotalUnits;
+int getNbDefendingUnits(const Entity *defender) {
+  return defender->TotalUnits;
 }
 
-void InitAttacker(Attacker *attacker) {
-  int nbDeathstar = attacker->entity.Deathstar;
-  int nbCruiser = attacker->entity.Cruiser;
-  int nbLightFighter = attacker->entity.LightFighter;
-  int nbHeavyFighter = attacker->entity.HeavyFighter;
-  attacker->entity.TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
+void InitAttacker(Entity *attacker) {
+  int nbDeathstar = attacker->Deathstar;
+  int nbCruiser = attacker->Cruiser;
+  int nbLightFighter = attacker->LightFighter;
+  int nbHeavyFighter = attacker->HeavyFighter;
+  attacker->TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
   int nbUnits = getNbAttackingUnits(attacker);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
@@ -153,14 +151,14 @@ void InitAttacker(Attacker *attacker) {
     units[idx++] = NewUnit(204);
   for (i=0; i<nbHeavyFighter; i++)
     units[idx++] = NewUnit(205);
-  attacker->entity.Units = units;
+  attacker->Units = units;
 }
 
-void InitDefender(Defender *defender) {
+void InitDefender(Entity *defender) {
   int nbLargeShieldDome = defender->LargeShieldDome;
   int nbHeavyLaser = defender->HeavyLaser;
   int nbRocketLauncher = defender->RocketLauncher;
-  defender->entity.TotalUnits = nbRocketLauncher + nbHeavyLaser + nbLargeShieldDome;
+  defender->TotalUnits = nbRocketLauncher + nbHeavyLaser + nbLargeShieldDome;
   int nbUnits = getNbDefendingUnits(defender);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
@@ -171,7 +169,7 @@ void InitDefender(Defender *defender) {
     units[idx++] = NewUnit(403);
   for (i=0; i<nbLargeShieldDome; i++)
     units[idx++] = NewUnit(408);
-  defender->entity.Units = units;
+  defender->Units = units;
 }
 
 int IsAlive(CombatUnit *unit) {
@@ -392,10 +390,10 @@ void Attack(CombatUnit *unit, CombatUnit *targetUnit) {
   }
 }
 
-void unitsFires(Attacker *attacker, Defender *defender) {
+void unitsFires(Entity *attacker, Entity *defender) {
   int i;
-  CombatUnit *attackingUnits = attacker->entity.Units;
-  CombatUnit *defendingUnits = defender->entity.Units;
+  CombatUnit *attackingUnits = attacker->Units;
+  CombatUnit *defendingUnits = defender->Units;
   int nbUnits = getNbAttackingUnits(attacker);
   int nbDefendingUnits = getNbDefendingUnits(defender);
   for (i=0; i<nbUnits; i++) {
@@ -415,10 +413,10 @@ void unitsFires(Attacker *attacker, Defender *defender) {
   }
 }
 
-void defencesFires(Defender *defender, Attacker *attacker) {
+void defencesFires(Entity *defender, Entity *attacker) {
   int i;
-  CombatUnit *attackingUnits = attacker->entity.Units;
-  CombatUnit *defendingUnits = defender->entity.Units;
+  CombatUnit *attackingUnits = attacker->Units;
+  CombatUnit *defendingUnits = defender->Units;
   int nbUnits = getNbAttackingUnits(attacker);
   int nbDefendingUnits = getNbDefendingUnits(defender);
   for (i=0; i<nbDefendingUnits; i++) {
@@ -438,43 +436,43 @@ void defencesFires(Defender *defender, Attacker *attacker) {
   }
 }
 
-int IsCombatDone(Attacker *attacker, Defender *defender) {
-  return defender->entity.TotalUnits <= 0 || attacker->entity.TotalUnits <= 0;
+int IsCombatDone(Entity *attacker, Entity *defender) {
+  return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
 
-void RemoveDestroyedUnits(Attacker *attacker, Defender *defender) {
+void RemoveDestroyedUnits(Entity *attacker, Entity *defender) {
   int i;
-  int l = attacker->entity.TotalUnits;
+  int l = attacker->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &attacker->entity.Units[i];
+    CombatUnit *unit = &attacker->Units[i];
     if (unit->HullPlating <= 0) {
-      attacker->entity.Units[i] = attacker->entity.Units[attacker->entity.TotalUnits-1];
-      attacker->entity.TotalUnits--;
+      attacker->Units[i] = attacker->Units[attacker->TotalUnits-1];
+      attacker->TotalUnits--;
     }
   }
-  l = defender->entity.TotalUnits;
+  l = defender->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &defender->entity.Units[i];
+    CombatUnit *unit = &defender->Units[i];
     if (unit->HullPlating <= 0) {
-      defender->entity.Units[i] = defender->entity.Units[defender->entity.TotalUnits-1];
-      defender->entity.TotalUnits--;
+      defender->Units[i] = defender->Units[defender->TotalUnits-1];
+      defender->TotalUnits--;
     }
   }
 }
 
-void RestoreShields(Attacker *attacker, Defender *defender) {
+void RestoreShields(Entity *attacker, Entity *defender) {
   int i;
-  int l = attacker->entity.TotalUnits;
+  int l = attacker->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &attacker->entity.Units[i];
+    CombatUnit *unit = &attacker->Units[i];
     unit->Shield = unit->ShieldPower * (1 + 0.1*0);
     if (SHOULD_LOG) {
       printf("%s still has integrity, restore its shield\n", UnitToString(unit));
     }
   }
-  l = defender->entity.TotalUnits;
+  l = defender->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &defender->entity.Units[i];
+    CombatUnit *unit = &defender->Units[i];
     unit->Shield = unit->ShieldPower * (1 + 0.1*0);
     if (SHOULD_LOG) {
       printf("%s still has integrity, restore its shield\n", UnitToString(unit));
@@ -482,17 +480,17 @@ void RestoreShields(Attacker *attacker, Defender *defender) {
   }
 }
 
-void PrintWinner(Attacker *attacker, Defender *defender) {
-  if (defender->entity.TotalUnits <= 0) {
+void PrintWinner(Entity *attacker, Entity *defender) {
+  if (defender->TotalUnits <= 0) {
     printf("Attacker win\n");
-  } else if (attacker->entity.TotalUnits <= 0) {
+  } else if (attacker->TotalUnits <= 0) {
     printf("Defender win\n");
   } else {
     printf("Draw\n");
   }
 }
 
-void Simulate(Attacker *attacker, Defender *defender) {
+void Simulate(Entity *attacker, Entity *defender) {
   InitDefender(defender);
   InitAttacker(attacker);
   int i;
@@ -564,16 +562,16 @@ int main(int argc, char *argv[]) {
   SHOULD_LOG = config.SimulatorLogging;
 
   srand(time(NULL));
-  Defender *defender = malloc(sizeof(Defender));
-  Attacker *attacker = malloc(sizeof(Attacker));
+  Entity *defender = malloc(sizeof(Entity));
+  Entity *attacker = malloc(sizeof(Entity));
 
-  attacker->entity.Deathstar = config.AttackerDeathstar;
-  attacker->entity.Cruiser = config.AttackerCruiser;
-  attacker->entity.LightFighter = config.AttackerLightFighter;
-  attacker->entity.HeavyFighter = config.AttackerHeavyFighter;
+  attacker->Deathstar = config.AttackerDeathstar;
+  attacker->Cruiser = config.AttackerCruiser;
+  attacker->LightFighter = config.AttackerLightFighter;
+  attacker->HeavyFighter = config.AttackerHeavyFighter;
 
-  defender->entity.Deathstar = 0;
-  defender->entity.Cruiser = 0;
+  defender->Deathstar = 0;
+  defender->Cruiser = 0;
   defender->HeavyLaser = config.DefenderHeavyLaser;
   defender->RocketLauncher = config.DefenderRocketLauncher;
   defender->LargeShieldDome = config.DefenderLargeShieldDome;
