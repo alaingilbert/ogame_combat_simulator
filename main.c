@@ -402,22 +402,14 @@ int IsCombatDone(Entity *attacker, Entity *defender) {
   return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
 
-void RemoveDestroyedUnits(Entity *attacker, Entity *defender) {
+void RemoveDestroyedUnits(Entity *entity) {
   int i;
-  int l = attacker->TotalUnits;
+  int l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &attacker->Units[i];
+    CombatUnit *unit = &entity->Units[i];
     if (unit->HullPlating <= 0) {
-      attacker->Units[i] = attacker->Units[attacker->TotalUnits-1];
-      attacker->TotalUnits--;
-    }
-  }
-  l = defender->TotalUnits;
-  for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &defender->Units[i];
-    if (unit->HullPlating <= 0) {
-      defender->Units[i] = defender->Units[defender->TotalUnits-1];
-      defender->TotalUnits--;
+      entity->Units[i] = entity->Units[entity->TotalUnits-1];
+      entity->TotalUnits--;
     }
   }
 }
@@ -456,7 +448,8 @@ void Simulate(Entity *attacker, Entity *defender) {
     }
     unitsFires(attacker, defender);
     unitsFires(defender, attacker);
-    RemoveDestroyedUnits(attacker, defender);
+    RemoveDestroyedUnits(attacker);
+    RemoveDestroyedUnits(defender);
     RestoreShields(attacker);
     RestoreShields(defender);
     if (IsCombatDone(attacker, defender)) {
