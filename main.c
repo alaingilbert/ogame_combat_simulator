@@ -6,6 +6,30 @@
 
 int SHOULD_LOG = 0;
 
+typedef enum {
+  SMALL_CARGO       = 202,
+  LARGE_CARGO       = 203,
+  LIGHT_FIGHTER     = 204,
+  HEAVY_FIGHTER     = 205,
+  CRUISER           = 206,
+  BATTLESHIP        = 207,
+  COLONY_SHIP       = 208,
+  RECYCLER          = 209,
+  ESPIONAGE_PROBE   = 210,
+  BOMBER            = 211,
+  DESTROYER         = 213,
+  DEATHSTAR         = 214,
+  BATTLECRUISER     = 215,
+  ROCKET_LAUNCHER   = 401,
+  LIGHT_LASER       = 402,
+  HEAVY_LASER       = 403,
+  GAUSS_CANNON      = 404,
+  ION_CANNON        = 405,
+  PLASMA_TURRET     = 406,
+  SMALL_SHIELD_DOME = 407,
+  LARGE_SHIELD_DOME = 408,
+} ships;
+
 typedef struct {
   int Metal;
   int Crystal;
@@ -60,34 +84,42 @@ CombatUnit NewUnit(int OgameID) {
   CombatUnit unit;
   unit.Id = 1;
   unit.OgameID = OgameID;
-  if (OgameID == 214) { // Deathstar
-    unit.ShieldPower = 50000;
-    unit.WeaponPower = 200000;
-    unit.Price = NewPrice(5000000, 4000000, 1000000);
-  } else if (OgameID == 401) { // Rocket Launcher
-    unit.ShieldPower = 20;
-    unit.WeaponPower = 80;
-    unit.Price = NewPrice(2000, 0, 0);
-  } else if (OgameID == 206) { // Cruiser
-    unit.ShieldPower = 50;
-    unit.WeaponPower = 400;
-    unit.Price = NewPrice(20000, 7000, 2000);
-  } else if (OgameID == 403) { // HeavyLaser
-    unit.ShieldPower = 100;
-    unit.WeaponPower = 250;
-    unit.Price = NewPrice(6000, 2000, 0);
-  } else if (OgameID == 408) { // LargeShieldDome
-    unit.ShieldPower = 10000;
-    unit.WeaponPower = 1;
-    unit.Price = NewPrice(50000, 50000, 0);
-  } else if (OgameID == 204) { // LightFighter
-    unit.ShieldPower = 10;
-    unit.WeaponPower = 50;
-    unit.Price = NewPrice(3000, 1000, 0);
-  } else if (OgameID == 205) { // HeavyFighter
-    unit.ShieldPower = 25;
-    unit.WeaponPower = 150;
-    unit.Price = NewPrice(6000, 4000, 0);
+  switch(OgameID) {
+    case DEATHSTAR:
+      unit.ShieldPower = 50000;
+      unit.WeaponPower = 200000;
+      unit.Price = NewPrice(5000000, 4000000, 1000000);
+      break;
+    case ROCKET_LAUNCHER:
+      unit.ShieldPower = 20;
+      unit.WeaponPower = 80;
+      unit.Price = NewPrice(2000, 0, 0);
+      break;
+    case CRUISER:
+      unit.ShieldPower = 50;
+      unit.WeaponPower = 400;
+      unit.Price = NewPrice(20000, 7000, 2000);
+      break;
+    case HEAVY_LASER:
+      unit.ShieldPower = 100;
+      unit.WeaponPower = 250;
+      unit.Price = NewPrice(6000, 2000, 0);
+      break;
+    case LARGE_SHIELD_DOME:
+      unit.ShieldPower = 10000;
+      unit.WeaponPower = 1;
+      unit.Price = NewPrice(50000, 50000, 0);
+      break;
+    case LIGHT_FIGHTER:
+      unit.ShieldPower = 10;
+      unit.WeaponPower = 50;
+      unit.Price = NewPrice(3000, 1000, 0);
+      break;
+    case HEAVY_FIGHTER:
+      unit.ShieldPower = 25;
+      unit.WeaponPower = 150;
+      unit.Price = NewPrice(6000, 4000, 0);
+      break;
   }
   unit.HullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
   unit.Shield = unit.ShieldPower * (1 + 0.1*0);
@@ -190,16 +222,15 @@ int HasExploded(CombatUnit *unit) {
 }
 
 int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
-  if (unit->OgameID == 206) { // Cruiser
-    if (targetUnit->OgameID == 401) { // RocketLauncher
-      return 10;
-    }
-  } else if (unit->OgameID == 214) { // Deathstar
-    if (targetUnit->OgameID == 401) { // RocketLauncher
-      return 200;
-    }
+  int rf = 0;
+  switch(unit->OgameID) {
+    case DEATHSTAR:
+      switch (targetUnit->OgameID) {
+        case ROCKET_LAUNCHER: rf = 200; break;
+      }
+      break;
   }
-  return 0;
+  return rf;
 }
 
 int GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
