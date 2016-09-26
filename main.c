@@ -586,11 +586,11 @@ void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
   int l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
-    if (IsShip(unit)) {
-      simulator->Debris.Metal += simulator->FleetToDebris * unit->Price.Metal;
-      simulator->Debris.Crystal += simulator->FleetToDebris * unit->Price.Crystal;
-    }
     if (unit->HullPlating <= 0) {
+      if (IsShip(unit)) {
+        simulator->Debris.Metal += simulator->FleetToDebris * unit->Price.Metal;
+        simulator->Debris.Crystal += simulator->FleetToDebris * unit->Price.Crystal;
+      }
       AddLosses(&entity->Losses, unit->Price);
       entity->Units[i] = entity->Units[entity->TotalUnits-1];
       entity->TotalUnits--;
