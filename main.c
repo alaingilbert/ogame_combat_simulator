@@ -44,6 +44,7 @@ typedef struct {
   int WeaponPower;
   int ShieldPower;
   int Shield;
+  int InitialShield;
   int HullPlating;
   int InitialHullPlating;
   Price Price;
@@ -214,7 +215,8 @@ CombatUnit NewUnit(int OgameID) {
   }
   unit.InitialHullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
   unit.HullPlating = unit.InitialHullPlating;
-  unit.Shield = unit.ShieldPower * (1 + 0.1*0);
+  unit.InitialShield = unit.ShieldPower * (1 + 0.1*0);
+  unit.Shield = unit.InitialShield;
   return unit;
 }
 
@@ -482,7 +484,7 @@ void Attack(CombatUnit *unit, CombatUnit *targetUnit) {
     free(targetString);
   }
   // Check for shot bounce
-  if (unit->WeaponPower < 0.01*targetUnit->Shield) {
+  if (unit->WeaponPower < 0.01*targetUnit->InitialShield) {
     if (SHOULD_LOG) {
       printf("shot bounced\n");
     }
@@ -556,7 +558,7 @@ void RestoreShields(Entity *entity) {
       printf("%s still has integrity, restore its shield\n", unitString);
       free(unitString);
     }
-    unit->Shield = unit->ShieldPower * (1 + 0.1*0);
+    unit->Shield = unit->InitialShield;
   }
 }
 
