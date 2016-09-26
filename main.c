@@ -447,8 +447,8 @@ int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
   return rf;
 }
 
-int GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
-  int rapidFire = 1;
+bool GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
+  bool rapidFire = true;
   int rf = GetRapidFireAgainst(unit, targetUnit);
   if (rf > 0) {
     float chance = (float)(rf-1) / (float)rf;
@@ -464,13 +464,13 @@ int GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
       if (SHOULD_LOG) {
         printf("%d does not get another shot.\n", unit->OgameID);
       }
-      rapidFire = 0;
+      rapidFire = false;
     }
   } else {
     if (SHOULD_LOG) {
       printf("%d doesn't have rapid fire against %d.\n", unit->OgameID, targetUnit->OgameID);
     }
-    rapidFire = 0;
+    rapidFire = false;
   }
   return rapidFire;
 }
@@ -520,7 +520,7 @@ void unitsFires(Entity *attacker, Entity *defender) {
   CombatUnit *defendingUnits = defender->Units;
   for (i=0; i<attacker->TotalUnits; i++) {
     CombatUnit *unit = &attackingUnits[i];
-    int rapidFire = 1;
+    bool rapidFire = true;
     while (rapidFire) {
       int random = 0;
       if (defender->TotalUnits > 1) {
