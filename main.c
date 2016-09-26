@@ -650,6 +650,7 @@ void Simulate(Simulator *simulator) {
   InitEntity(attacker);
   int currentRound;
   for (currentRound=1; currentRound<=simulator->MaxRounds; currentRound++) {
+    simulator->Rounds = currentRound;
     if (SHOULD_LOG) {
       printf("-------------\n");
       printf("ROUND %d\n", currentRound);
