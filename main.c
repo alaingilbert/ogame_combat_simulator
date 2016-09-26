@@ -405,29 +405,6 @@ void unitsFires(Entity *attacker, Entity *defender) {
   }
 }
 
-void defencesFires(Entity *defender, Entity *attacker) {
-  int i;
-  CombatUnit *attackingUnits = attacker->Units;
-  CombatUnit *defendingUnits = defender->Units;
-  int nbUnits = getNbAttackingUnits(attacker);
-  int nbDefendingUnits = getNbDefendingUnits(defender);
-  for (i=0; i<nbDefendingUnits; i++) {
-    CombatUnit *unit = &defendingUnits[i];
-    int rapidFire = 1;
-    while (rapidFire) {
-      int random = 0;
-      if (nbUnits > 1) {
-        random = rand() % (nbUnits-1);
-      }
-      CombatUnit *targetUnit = &attackingUnits[random];
-      if (IsAlive(targetUnit)) {
-        Attack(unit, targetUnit);
-      }
-      rapidFire = GetAnotherShot(unit, targetUnit);
-    }
-  }
-}
-
 int IsCombatDone(Entity *attacker, Entity *defender) {
   return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
@@ -493,7 +470,7 @@ void Simulate(Entity *attacker, Entity *defender) {
       printf("-------------\n");
     }
     unitsFires(attacker, defender);
-    defencesFires(defender, attacker);
+    unitsFires(defender, attacker);
     RemoveDestroyedUnits(attacker, defender);
     RestoreShields(attacker, defender);
     if (IsCombatDone(attacker, defender)) {
