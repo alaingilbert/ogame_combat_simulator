@@ -139,8 +139,7 @@ void InitEntity(Entity *entity) {
   int nbRocketLauncher = entity->RocketLauncher;
   entity->TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
   entity->TotalUnits += nbLargeShieldDome + nbHeavyLaser + nbRocketLauncher;
-  int nbUnits = getNbUnits(entity);
-  CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
+  CombatUnit *units = malloc(sizeof(CombatUnit) * entity->TotalUnits);
   int i;
   int idx = 0;
   for (i=0; i<nbDeathstar; i++)
