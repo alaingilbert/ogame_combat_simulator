@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "./ini.h"
 
 int SHOULD_LOG = 0;
 
@@ -363,18 +364,58 @@ void Simulate(Attacker *attacker, Defender *defender) {
   PrintWinner(attacker, defender);
 }
 
+typedef struct {
+  int SimulatorLogging;
+  int AttackerDeathstar;
+  int AttackerCruiser;
+  int DefenderRocketLauncher;
+  int DefenderHeavyLaser;
+} configuration;
+
+
+static int handler(void* user, const char* section, const char* name,
+                   const char* value)
+{
+  configuration* pconfig = (configuration*)user;
+
+  #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
+  if (MATCH("simulator", "logging")) {
+    pconfig->SimulatorLogging= atoi(value);
+  } else if (MATCH("defender", "RocketLauncher")) {
+    pconfig->DefenderRocketLauncher = atoi(value);
+  } else if (MATCH("defender", "HeavyLaser")) {
+    pconfig->DefenderHeavyLaser = atoi(value);
+  } else if (MATCH("attacker", "Deathstar")) {
+    pconfig->AttackerDeathstar = atoi(value);
+  } else if (MATCH("attacker", "Cruiser")) {
+    pconfig->AttackerCruiser = atoi(value);
+  } else {
+    return 0;  /* unknown section/name, error */
+  }
+  return 1;
+}
+
 int main(int argc, char *argv[]) {
+  configuration config;
+
+  if (ini_parse("test.ini", handler, &config) < 0) {
+    printf("Can't load 'test.ini'\n");
+    return 1;
+  }
+
+  SHOULD_LOG = config.SimulatorLogging;
+
   srand(time(NULL));
   Defender *defender = malloc(sizeof(Defender));
   Attacker *attacker = malloc(sizeof(Attacker));
 
-  attacker->entity.Deathstar = 10000;
-  attacker->entity.Cruiser = 0;
+  attacker->entity.Deathstar = config.AttackerDeathstar;
+  attacker->entity.Cruiser = config.AttackerCruiser;
 
   defender->entity.Deathstar = 0;
   defender->entity.Cruiser = 0;
-  defender->HeavyLaser = 0;
-  defender->RocketLauncher = 1000000;
+  defender->HeavyLaser = config.DefenderHeavyLaser;
+  defender->RocketLauncher = config.DefenderRocketLauncher;
 
   Simulate(attacker, defender);
   return 0;
