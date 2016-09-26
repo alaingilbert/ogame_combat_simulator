@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 #include "./ini.h"
 
 bool SHOULD_LOG = false;
@@ -553,7 +554,7 @@ bool IsCombatDone(Entity *attacker, Entity *defender) {
   return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
 
-void AddLosses(Price *losses, const Price price) {
+void AddPrice(Price *losses, const Price price) {
   losses->Metal += price.Metal;
   losses->Crystal += price.Crystal;
   losses->Deuterium += price.Deuterium;
@@ -591,7 +592,7 @@ void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
         simulator->Debris.Metal += simulator->FleetToDebris * unit->Price.Metal;
         simulator->Debris.Crystal += simulator->FleetToDebris * unit->Price.Crystal;
       }
-      AddLosses(&entity->Losses, unit->Price);
+      AddPrice(&entity->Losses, unit->Price);
       entity->Units[i] = entity->Units[entity->TotalUnits-1];
       entity->TotalUnits--;
     }
@@ -918,27 +919,51 @@ int main(int argc, char *argv[]) {
   simulator->Attacker = attacker;
   simulator->Defender = defender;
 
+  int attackerWin = 0;
+  int defenderWin = 0;
+  int draw = 0;
+  int rounds = 0;
+  int moonChance = 0;
+  Price attackerLosses = NewPrice(0, 0, 0);
+  Price defenderLosses = NewPrice(0, 0, 0);
+  Price debris = NewPrice(0, 0, 0);
+
   int i;
   for (i=0; i<nbSimulations; i++) {
     simulator->Rounds = 0;
     simulator->Debris = NewPrice(0, 0, 0);
     Simulate(simulator);
+    if (simulator->Winner == 0)
+      attackerWin++;
+    else if (simulator->Winner == 1)
+      defenderWin++;
+    else
+      draw++;
+    AddPrice(&attackerLosses, simulator->Attacker->Losses);
+    AddPrice(&defenderLosses, simulator->Defender->Losses);
+    AddPrice(&debris, simulator->Debris);
+    rounds += simulator->Rounds;
+
     free(attacker->Units);
     free(defender->Units);
   }
 
+  printf("Simulations: %d\n", nbSimulations);
+  printf("Attacker win: %d%%\n", (int)roundf((float)attackerWin/(float)nbSimulations * 100));
+  printf("Defender win: %d%%\n", (int)roundf((float)defenderWin/(float)nbSimulations * 100));
+  printf("Draw: %d%%\n", (int)roundf((float)draw/(float)nbSimulations * 100));
   printf("Attacker losses: %d, %d, %d\n",
-      simulator->Attacker->Losses.Metal,
-      simulator->Attacker->Losses.Crystal,
-      simulator->Attacker->Losses.Deuterium);
+      attackerLosses.Metal/nbSimulations,
+      attackerLosses.Crystal/nbSimulations,
+      attackerLosses.Deuterium/nbSimulations);
   printf("Defender losses: %d, %d, %d\n",
-      simulator->Defender->Losses.Metal,
-      simulator->Defender->Losses.Crystal,
-      simulator->Defender->Losses.Deuterium);
+      defenderLosses.Metal/nbSimulations,
+      defenderLosses.Crystal/nbSimulations,
+      defenderLosses.Deuterium/nbSimulations);
   printf("Debris: %d, %d, %d\n",
-      simulator->Debris.Metal,
-      simulator->Debris.Crystal,
-      simulator->Debris.Deuterium);
+      debris.Metal/nbSimulations,
+      debris.Crystal/nbSimulations,
+      debris.Deuterium/nbSimulations);
 
   free(attacker);
   free(defender);
