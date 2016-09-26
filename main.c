@@ -99,30 +99,15 @@ CombatUnit NewUnit(int OgameID) {
   unit.Id = 1;
   unit.OgameID = OgameID;
   switch(OgameID) {
-    case DEATHSTAR:
-      unit.ShieldPower = 50000;
-      unit.WeaponPower = 200000;
-      unit.Price = NewPrice(5000000, 4000000, 1000000);
+    case SMALL_CARGO:
+      unit.ShieldPower = 10;
+      unit.WeaponPower = 5;
+      unit.Price = NewPrice(2000, 2000, 0);
       break;
-    case ROCKET_LAUNCHER:
-      unit.ShieldPower = 20;
-      unit.WeaponPower = 80;
-      unit.Price = NewPrice(2000, 0, 0);
-      break;
-    case CRUISER:
-      unit.ShieldPower = 50;
-      unit.WeaponPower = 400;
-      unit.Price = NewPrice(20000, 7000, 2000);
-      break;
-    case HEAVY_LASER:
-      unit.ShieldPower = 100;
-      unit.WeaponPower = 250;
-      unit.Price = NewPrice(6000, 2000, 0);
-      break;
-    case LARGE_SHIELD_DOME:
-      unit.ShieldPower = 10000;
-      unit.WeaponPower = 1;
-      unit.Price = NewPrice(50000, 50000, 0);
+    case LARGE_CARGO:
+      unit.ShieldPower = 25;
+      unit.WeaponPower = 5;
+      unit.Price = NewPrice(6000, 6000, 0);
       break;
     case LIGHT_FIGHTER:
       unit.ShieldPower = 10;
@@ -133,6 +118,96 @@ CombatUnit NewUnit(int OgameID) {
       unit.ShieldPower = 25;
       unit.WeaponPower = 150;
       unit.Price = NewPrice(6000, 4000, 0);
+      break;
+    case CRUISER:
+      unit.ShieldPower = 50;
+      unit.WeaponPower = 400;
+      unit.Price = NewPrice(20000, 7000, 2000);
+      break;
+    case BATTLESHIP:
+      unit.ShieldPower = 200;
+      unit.WeaponPower = 1000;
+      unit.Price = NewPrice(45000, 15000, 0);
+      break;
+    case COLONY_SHIP:
+      unit.ShieldPower = 100;
+      unit.WeaponPower = 50;
+      unit.Price = NewPrice(10000, 20000, 10000);
+      break;
+    case RECYCLER:
+      unit.ShieldPower = 10;
+      unit.WeaponPower = 1;
+      unit.Price = NewPrice(10000, 6000, 2000);
+      break;
+    case ESPIONAGE_PROBE:
+      unit.ShieldPower = 1; // 0.01
+      unit.WeaponPower = 1; // 0.01
+      unit.Price = NewPrice(0, 1000, 0);
+      break;
+    case BOMBER:
+      unit.ShieldPower = 500;
+      unit.WeaponPower = 1000;
+      unit.Price = NewPrice(50000, 25000, 15000);
+      break;
+    case SOLAR_SATELLITE:
+      unit.ShieldPower = 1;
+      unit.WeaponPower = 1;
+      unit.Price = NewPrice(0, 2000, 500);
+      break;
+    case DESTROYER:
+      unit.ShieldPower = 500;
+      unit.WeaponPower = 2000;
+      unit.Price = NewPrice(60000, 50000, 15000);
+      break;
+    case DEATHSTAR:
+      unit.ShieldPower = 50000;
+      unit.WeaponPower = 200000;
+      unit.Price = NewPrice(5000000, 4000000, 1000000);
+      break;
+    case BATTLECRUISER:
+      unit.ShieldPower = 400;
+      unit.WeaponPower = 700;
+      unit.Price = NewPrice(30000, 40000, 15000);
+      break;
+    case ROCKET_LAUNCHER:
+      unit.ShieldPower = 20;
+      unit.WeaponPower = 80;
+      unit.Price = NewPrice(2000, 0, 0);
+      break;
+    case LIGHT_LASER:
+      unit.ShieldPower = 25;
+      unit.WeaponPower = 100;
+      unit.Price = NewPrice(1500, 500, 0);
+      break;
+    case HEAVY_LASER:
+      unit.ShieldPower = 100;
+      unit.WeaponPower = 250;
+      unit.Price = NewPrice(6000, 2000, 0);
+      break;
+    case GAUSS_CANNON:
+      unit.ShieldPower = 200;
+      unit.WeaponPower = 1100;
+      unit.Price = NewPrice(20000, 15000, 2000);
+      break;
+    case ION_CANNON:
+      unit.ShieldPower = 500;
+      unit.WeaponPower = 150;
+      unit.Price = NewPrice(2000, 6000, 0);
+      break;
+    case PLASMA_TURRET:
+      unit.ShieldPower = 300;
+      unit.WeaponPower = 3000;
+      unit.Price = NewPrice(50000, 50000, 30000);
+      break;
+    case SMALL_SHIELD_DOME:
+      unit.ShieldPower = 2000;
+      unit.WeaponPower = 1;
+      unit.Price = NewPrice(10000, 10000, 0);
+      break;
+    case LARGE_SHIELD_DOME:
+      unit.ShieldPower = 10000;
+      unit.WeaponPower = 1;
+      unit.Price = NewPrice(50000, 50000, 0);
       break;
   }
   unit.HullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
