@@ -17,6 +17,7 @@ typedef enum {
   RECYCLER          = 209,
   ESPIONAGE_PROBE   = 210,
   BOMBER            = 211,
+  SOLAR_SATELLITE   = 212,
   DESTROYER         = 213,
   DEATHSTAR         = 214,
   BATTLECRUISER     = 215,
