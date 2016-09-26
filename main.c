@@ -148,19 +148,19 @@ void InitEntity(Entity *entity) {
   int i;
   int idx = 0;
   for (i=0; i<nbDeathstar; i++)
-    units[idx++] = NewUnit(214);
+    units[idx++] = NewUnit(DEATHSTAR);
   for (i=0; i<nbCruiser; i++)
-    units[idx++] = NewUnit(206);
+    units[idx++] = NewUnit(CRUISER);
   for (i=0; i<nbLightFighter; i++)
-    units[idx++] = NewUnit(204);
+    units[idx++] = NewUnit(LIGHT_FIGHTER);
   for (i=0; i<nbHeavyFighter; i++)
-    units[idx++] = NewUnit(205);
+    units[idx++] = NewUnit(HEAVY_FIGHTER);
   for (i=0; i<nbRocketLauncher; i++)
-    units[idx++] = NewUnit(401);
+    units[idx++] = NewUnit(ROCKET_LAUNCHER);
   for (i=0; i<nbHeavyLaser; i++)
-    units[idx++] = NewUnit(403);
+    units[idx++] = NewUnit(HEAVY_LASER);
   for (i=0; i<nbLargeShieldDome; i++)
-    units[idx++] = NewUnit(408);
+    units[idx++] = NewUnit(LARGE_SHIELD_DOME);
   entity->Units = units;
 }
 
