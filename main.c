@@ -45,6 +45,7 @@ typedef struct {
   int ShieldPower;
   int Shield;
   int HullPlating;
+  int InitialHullPlating;
   Price Price;
 } CombatUnit;
 
@@ -211,7 +212,8 @@ CombatUnit NewUnit(int OgameID) {
       unit.Price = NewPrice(50000, 50000, 0);
       break;
   }
-  unit.HullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
+  unit.InitialHullPlating = (1 + (0 / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
+  unit.HullPlating = unit.InitialHullPlating;
   unit.Shield = unit.ShieldPower * (1 + 0.1*0);
   return unit;
 }
@@ -297,10 +299,6 @@ bool IsAlive(CombatUnit *unit) {
   return unit->HullPlating > 0;
 }
 
-int GetInitialHullPlating(CombatUnit *unit) {
-  return (1 + (0 / 10)) * ((unit->Price.Metal + unit->Price.Crystal) / 10);
-}
-
 char *UnitToString(CombatUnit *unit) {
   char *msg = malloc(sizeof(char) * 100);
   if (unit->OgameID == ROCKET_LAUNCHER)
@@ -317,9 +315,9 @@ char *UnitToString(CombatUnit *unit) {
 
 bool HasExploded(CombatUnit *unit) {
   bool exploded = false;
-  float hullPercentage = (float)unit->HullPlating / (float)GetInitialHullPlating(unit);
+  float hullPercentage = (float)unit->HullPlating / (float)unit->InitialHullPlating;
   if (hullPercentage <= 0.7) {
-    float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)GetInitialHullPlating(unit);
+    float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)unit->InitialHullPlating;
     float dice = (float)rand()/(float)(RAND_MAX/1);
     if (SHOULD_LOG) {
       printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding);
