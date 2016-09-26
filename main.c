@@ -409,17 +409,6 @@ int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
         case BATTLECRUISER:   rf = 2;  break;
       }
       break;
-    case BATTLECRUISER:
-      switch (targetUnit->OgameID) {
-        case ESPIONAGE_PROBE: rf = 5; break;
-        case SOLAR_SATELLITE: rf = 5; break;
-        case SMALL_CARGO:     rf = 3; break;
-        case LARGE_CARGO:     rf = 3; break;
-        case HEAVY_FIGHTER:   rf = 4; break;
-        case CRUISER:         rf = 4; break;
-        case BATTLESHIP:      rf = 7; break;
-      }
-      break;
     case DEATHSTAR:
       switch (targetUnit->OgameID) {
         case SMALL_CARGO:     rf = 250;  break;
@@ -440,6 +429,17 @@ int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
         case GAUSS_CANNON:    rf = 50;   break;
         case ION_CANNON:      rf = 100;  break;
         case BATTLECRUISER:   rf = 15;   break;
+      }
+      break;
+    case BATTLECRUISER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+        case SMALL_CARGO:     rf = 3; break;
+        case LARGE_CARGO:     rf = 3; break;
+        case HEAVY_FIGHTER:   rf = 4; break;
+        case CRUISER:         rf = 4; break;
+        case BATTLESHIP:      rf = 7; break;
       }
       break;
   }
