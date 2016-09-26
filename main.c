@@ -898,6 +898,19 @@ int main(int argc, char *argv[]) {
   simulator->Defender = defender;
   Simulate(simulator);
 
+  printf("Attacker losses: %d, %d, %d\n",
+      simulator->Attacker->Losses.Metal,
+      simulator->Attacker->Losses.Crystal,
+      simulator->Attacker->Losses.Deuterium);
+  printf("Defender losses: %d, %d, %d\n",
+      simulator->Defender->Losses.Metal,
+      simulator->Defender->Losses.Crystal,
+      simulator->Defender->Losses.Deuterium);
+  printf("Debris: %d, %d, %d\n",
+      simulator->Debris.Metal,
+      simulator->Debris.Crystal,
+      simulator->Debris.Deuterium);
+
   free(attacker->Units);
   free(defender->Units);
   free(attacker);
