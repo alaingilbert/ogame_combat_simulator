@@ -225,9 +225,106 @@ int HasExploded(CombatUnit *unit) {
 int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
   int rf = 0;
   switch(unit->OgameID) {
+    case SMALL_CARGO:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+      }
+      break;
+    case LARGE_CARGO:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+      }
+      break;
+    case LIGHT_FIGHTER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+      }
+      break;
+    case HEAVY_FIGHTER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+        case SMALL_CARGO:     rf = 3; break;
+      }
+      break;
+    case CRUISER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5;  break;
+        case SOLAR_SATELLITE: rf = 5;  break;
+        case LIGHT_FIGHTER:   rf = 6;  break;
+        case ROCKET_LAUNCHER: rf = 10; break;
+      }
+      break;
+    case BATTLESHIP:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+      }
+      break;
+    case COLONY_SHIP:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+      }
+      break;
+    case RECYCLER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+      }
+      break;
+    case BOMBER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5;  break;
+        case SOLAR_SATELLITE: rf = 5;  break;
+        case ION_CANNON:      rf = 10; break;
+        case ROCKET_LAUNCHER: rf = 20; break;
+        case LIGHT_LASER:     rf = 20; break;
+        case HEAVY_LASER:     rf = 10; break;
+      }
+      break;
+    case DESTROYER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5;  break;
+        case SOLAR_SATELLITE: rf = 5;  break;
+        case LIGHT_LASER:     rf = 10; break;
+        case BATTLECRUISER:   rf = 2;  break;
+      }
+      break;
+    case BATTLECRUISER:
+      switch (targetUnit->OgameID) {
+        case ESPIONAGE_PROBE: rf = 5; break;
+        case SOLAR_SATELLITE: rf = 5; break;
+        case SMALL_CARGO:     rf = 3; break;
+        case LARGE_CARGO:     rf = 3; break;
+        case HEAVY_FIGHTER:   rf = 4; break;
+        case CRUISER:         rf = 4; break;
+        case BATTLESHIP:      rf = 7; break;
+      }
+      break;
     case DEATHSTAR:
       switch (targetUnit->OgameID) {
-        case ROCKET_LAUNCHER: rf = 200; break;
+        case SMALL_CARGO:     rf = 250;  break;
+        case LARGE_CARGO:     rf = 250;  break;
+        case LIGHT_FIGHTER:   rf = 200;  break;
+        case HEAVY_FIGHTER:   rf = 100;  break;
+        case CRUISER:         rf = 33;   break;
+        case BATTLESHIP:      rf = 30;   break;
+        case COLONY_SHIP:     rf = 250;  break;
+        case RECYCLER:        rf = 250;  break;
+        case ESPIONAGE_PROBE: rf = 1250; break;
+        case SOLAR_SATELLITE: rf = 1250; break;
+        case BOMBER:          rf = 25;   break;
+        case DESTROYER:       rf = 5;    break;
+        case ROCKET_LAUNCHER: rf = 200;  break;
+        case LIGHT_LASER:     rf = 200;  break;
+        case HEAVY_LASER:     rf = 100;  break;
+        case GAUSS_CANNON:    rf = 50;   break;
+        case ION_CANNON:      rf = 100;  break;
+        case BATTLECRUISER:   rf = 15;   break;
       }
       break;
   }
