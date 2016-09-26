@@ -575,11 +575,11 @@ void PrintWinner(Entity *attacker, Entity *defender) {
 void Simulate(Entity *attacker, Entity *defender) {
   InitEntity(defender);
   InitEntity(attacker);
-  int i;
-  for (i=0; i<6; i++) {
+  int currentRound;
+  for (currentRound=1; currentRound<=6; currentRound++) {
     if (SHOULD_LOG) {
       printf("-------------\n");
-      printf("ROUND %d\n", i);
+      printf("ROUND %d\n", currentRound);
       printf("-------------\n");
     }
     unitsFires(attacker, defender);
