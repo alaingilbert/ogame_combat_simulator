@@ -57,14 +57,29 @@ typedef struct {
   int Hyperspace;
 
   // Ships
-  int Deathstar;
-  int Cruiser;
+  int SmallCargo;
+  int LargeCargo;
   int LightFighter;
   int HeavyFighter;
+  int Cruiser;
+  int Battleship;
+  int ColonyShip;
+  int Recycler;
+  int EspionageProbe;
+  int Bomber;
+  int SolarSatellite;
+  int Destroyer;
+  int Deathstar;
+  int Battlecruiser;
 
   // Defences
   int RocketLauncher;
+  int LightLaser;
   int HeavyLaser;
+  int GaussCannon;
+  int IonCannon;
+  int PlasmaTurret;
+  int SmallShieldDome;
   int LargeShieldDome;
 
   int TotalUnits;
