@@ -617,15 +617,29 @@ void RestoreShields(Entity *entity) {
   }
 }
 
-void PrintWinner(Entity *attacker, Entity *defender) {
-  if (defender->TotalUnits <= 0 && attacker->TotalUnits <= 0) {
-    printf("Draw\n");
-  } else if (defender->TotalUnits <= 0) {
-    printf("Attacker win\n");
-  } else if (attacker->TotalUnits <= 0) {
-    printf("Defender win\n");
+void PrintWinner(Simulator *simulator) {
+  if (simulator->Defender->TotalUnits <= 0 && simulator->Attacker->TotalUnits <= 0) {
+    simulator->Winner = 2;
+    if (SHOULD_LOG) {
+      printf("The battle ended draw.\n");
+    }
+  } else if (simulator->Defender->TotalUnits <= 0) {
+    simulator->Winner = 0;
+    if (SHOULD_LOG) {
+      printf("The battle ended after %d rounds with attacker winning\n",
+          simulator->Rounds);
+    }
+  } else if (simulator->Attacker->TotalUnits <= 0) {
+    simulator->Winner = 1;
+    if (SHOULD_LOG) {
+      printf("The battle ended after %d rounds with defender winning\n",
+          simulator->Rounds);
+    }
   } else {
-    printf("Draw\n");
+    simulator->Winner = 2;
+    if (SHOULD_LOG) {
+      printf("The battle ended draw.\n");
+    }
   }
 }
 
@@ -650,7 +664,7 @@ void Simulate(Simulator *simulator) {
       break;
     }
   }
-  PrintWinner(attacker, defender);
+  PrintWinner(simulator);
 }
 
 typedef struct {
