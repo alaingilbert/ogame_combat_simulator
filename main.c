@@ -601,6 +601,7 @@ void Simulate(Entity *attacker, Entity *defender) {
 
 typedef struct {
   int SimulatorLogging;
+  int Simulations;
 
   int AttackerWeapon;
   int AttackerShield;
@@ -658,6 +659,9 @@ static int handler(void* user, const char* section, const char* name,
   #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
   if (MATCH("simulator", "logging")) {
     pconfig->SimulatorLogging= atoi(value);
+  } else if (MATCH("simulator", "Simulations")) {
+    pconfig->Simulations = atoi(value);
+
   } else if (MATCH("defender", "Weapon")) {
     pconfig->DefenderWeapon = atoi(value);
   } else if (MATCH("defender", "Shield")) {
@@ -763,6 +767,7 @@ int main(int argc, char *argv[]) {
   }
 
   SHOULD_LOG = config.SimulatorLogging;
+  int nbSimulations = config.Simulations;
 
   Entity *defender = malloc(sizeof(Entity));
   Entity *attacker = malloc(sizeof(Entity));
