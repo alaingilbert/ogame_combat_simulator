@@ -125,12 +125,8 @@ CombatUnit NewUnit(int OgameID) {
   return unit;
 }
 
-int getNbAttackingUnits(const Entity *attacker) {
-  return attacker->TotalUnits;
-}
-
-int getNbDefendingUnits(const Entity *defender) {
-  return defender->TotalUnits;
+int getNbUnits(const Entity *entity) {
+  return entity->TotalUnits;
 }
 
 void InitEntity(Entity *entity) {
@@ -143,7 +139,7 @@ void InitEntity(Entity *entity) {
   int nbRocketLauncher = entity->RocketLauncher;
   entity->TotalUnits = nbDeathstar + nbCruiser + nbLightFighter + nbHeavyFighter;
   entity->TotalUnits += nbLargeShieldDome + nbHeavyLaser + nbRocketLauncher;
-  int nbUnits = getNbAttackingUnits(entity);
+  int nbUnits = getNbUnits(entity);
   CombatUnit *units = malloc(sizeof(CombatUnit) * nbUnits);
   int i;
   int idx = 0;
@@ -383,8 +379,8 @@ void unitsFires(Entity *attacker, Entity *defender) {
   int i;
   CombatUnit *attackingUnits = attacker->Units;
   CombatUnit *defendingUnits = defender->Units;
-  int nbUnits = getNbAttackingUnits(attacker);
-  int nbDefendingUnits = getNbDefendingUnits(defender);
+  int nbUnits = getNbUnits(attacker);
+  int nbDefendingUnits = getNbUnits(defender);
   for (i=0; i<nbUnits; i++) {
     CombatUnit *unit = &attackingUnits[i];
     int rapidFire = 1;
