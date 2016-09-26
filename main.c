@@ -87,7 +87,20 @@ typedef struct {
 
   int TotalUnits;
   CombatUnit *Units;
+  Price Losses;
 } Entity;
+
+typedef struct {
+  int Winner;
+  int Rounds;
+  int MaxRounds;
+  float FleetToDebris;
+  Entity *Attacker;
+  Entity *Defender;
+  Price AttackerLosses;
+  Price DefenderLosses;
+  Price Debris;
+} Simulator;
 
 Price NewPrice(int metal, int crystal, int deuterium) {
   Price price;
@@ -221,6 +234,8 @@ CombatUnit NewUnit(Entity *entity, int OgameID) {
 }
 
 void InitEntity(Entity *entity) {
+  entity->Losses = NewPrice(0, 0, 0);
+
   entity->TotalUnits = 0;
   entity->TotalUnits += entity->SmallCargo;
   entity->TotalUnits += entity->LargeCargo;
@@ -540,12 +555,19 @@ bool IsCombatDone(Entity *attacker, Entity *defender) {
   return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
 
+void AddLosses(Price *losses, const Price price) {
+  losses->Metal += price.Metal;
+  losses->Crystal += price.Crystal;
+  losses->Deuterium += price.Deuterium;
+}
+
 void RemoveDestroyedUnits(Entity *entity) {
   int i;
   int l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (unit->HullPlating <= 0) {
+      AddLosses(&entity->Losses, unit->Price);
       entity->Units[i] = entity->Units[entity->TotalUnits-1];
       entity->TotalUnits--;
     }
