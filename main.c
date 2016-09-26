@@ -315,12 +315,16 @@ char *UnitToString(CombatUnit *unit) {
   return msg;
 }
 
+float RollDice() {
+  return (float)rand()/(float)(RAND_MAX/1);
+}
+
 bool HasExploded(CombatUnit *unit) {
   bool exploded = false;
   float hullPercentage = (float)unit->HullPlating / (float)unit->InitialHullPlating;
   if (hullPercentage <= 0.7) {
     float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)unit->InitialHullPlating;
-    float dice = (float)rand()/(float)(RAND_MAX/1);
+    float dice = RollDice();
     if (SHOULD_LOG) {
       printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding);
     }
@@ -452,7 +456,7 @@ bool GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
   int rf = GetRapidFireAgainst(unit, targetUnit);
   if (rf > 0) {
     float chance = (float)(rf-1) / (float)rf;
-    float dice = (float)rand()/(float)(RAND_MAX/1);
+    float dice = RollDice();
     if (SHOULD_LOG) {
       printf("dice was %1.3f, comparing with %1.3f: ", dice, chance);
     }
