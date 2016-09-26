@@ -354,7 +354,11 @@ int GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
 
 void Attack(CombatUnit *unit, CombatUnit *targetUnit) {
   if (SHOULD_LOG) {
-    printf("%s fires at %s; ", UnitToString(unit), UnitToString(targetUnit));
+    char *attackingString = UnitToString(unit);
+    char *targetString = UnitToString(targetUnit);
+    printf("%s fires at %s; ", attackingString, targetString);
+    free(attackingString);
+    free(targetString);
   }
   // Check for shot bounce
   if (unit->WeaponPower < 0.01*targetUnit->Shield) {
@@ -374,7 +378,9 @@ void Attack(CombatUnit *unit, CombatUnit *targetUnit) {
     targetUnit->Shield -= weapon;
   }
   if (SHOULD_LOG) {
-    printf("result is %s\n", UnitToString(targetUnit));
+    char *targetString = UnitToString(targetUnit);
+    printf("result is %s\n", targetString);
+    free(targetString);
   }
 
   // Check for explosion
@@ -429,7 +435,9 @@ void RestoreShields(Entity *entity) {
     CombatUnit *unit = &entity->Units[i];
     unit->Shield = unit->ShieldPower * (1 + 0.1*0);
     if (SHOULD_LOG) {
-      printf("%s still has integrity, restore its shield\n", UnitToString(unit));
+      char *unitString = UnitToString(unit);
+      printf("%s still has integrity, restore its shield\n", unitString);
+      free(unitString);
     }
   }
 }
@@ -643,5 +651,11 @@ int main(int argc, char *argv[]) {
   defender->LargeShieldDome = config.DefenderLargeShieldDome;
 
   Simulate(attacker, defender);
+
+  free(attacker->Units);
+  free(defender->Units);
+  free(attacker);
+  free(defender);
+
   return 0;
 }
