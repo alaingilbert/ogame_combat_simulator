@@ -174,15 +174,12 @@ int GetInitialHullPlating(CombatUnit *unit) {
 
 char *UnitToString(CombatUnit *unit) {
   char *msg = malloc(sizeof(char) * 100);
-  if (unit->OgameID == 401) {
+  if (unit->OgameID == 401)
     strcat(msg, "RocketLauncher with ");
-  }
-  if (unit->OgameID == 403) {
+  if (unit->OgameID == 403)
     strcat(msg, "HeavyLaser with ");
-  }
-  if (unit->OgameID == 206) {
+  if (unit->OgameID == 206)
     strcat(msg, "Cruiser with ");
-  }
   char buffer[20];
   sprintf(buffer, "%d:%d:%d", unit->HullPlating, unit->Shield, unit->WeaponPower);
   strcat(msg, buffer);
