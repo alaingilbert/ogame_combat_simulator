@@ -36,9 +36,9 @@ typedef enum {
 } ships;
 
 typedef struct {
-  int Metal;
-  int Crystal;
-  int Deuterium;
+  long Metal;
+  long Crystal;
+  long Deuterium;
 } Price;
 
 typedef struct {
@@ -1040,15 +1040,15 @@ int main(int argc, char *argv[]) {
     printf("Attacker win: %d%%\n", attackerWin);
     printf("Defender win: %d%%\n", defenderWin);
     printf("Draw: %d%%\n", draw);
-    printf("Attacker losses: %d, %d, %d\n",
+    printf("Attacker losses: %ld, %ld, %ld\n",
         attackerLosses.Metal/nbSimulations,
         attackerLosses.Crystal/nbSimulations,
         attackerLosses.Deuterium/nbSimulations);
-    printf("Defender losses: %d, %d, %d\n",
+    printf("Defender losses: %ld, %ld, %ld\n",
         defenderLosses.Metal/nbSimulations,
         defenderLosses.Crystal/nbSimulations,
         defenderLosses.Deuterium/nbSimulations);
-    printf("Debris: %d, %d, %d\n",
+    printf("Debris: %ld, %ld, %ld\n",
         debris.Metal/nbSimulations,
         debris.Crystal/nbSimulations,
         debris.Deuterium/nbSimulations);
