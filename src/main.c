@@ -919,6 +919,66 @@ void FreeEntity(Entity *entity) {
   free(entity);
 }
 
+typedef struct {
+  int Simulations;
+  int Rounds;
+  int AttackerWin;
+  int DefenderWin;
+  int Draw;
+  int Recycler;
+  int Moonchance;
+  Price AttackerLosses;
+  Price DefenderLosses;
+  Price Debris;
+} Result;
+
+void PrettyPrintResults(Result *result) {
+  printf("Results (%d simulations | ~%d rounds)\n", result->Simulations, result->Rounds);
+  printf("Attacker win: %d%%\n", result->AttackerWin);
+  printf("Defender win: %d%%\n", result->DefenderWin);
+  printf("Draw: %d%%\n", result->Draw);
+  printf("Attacker losses: %ld, %ld, %ld\n",
+      result->AttackerLosses.Metal,
+      result->AttackerLosses.Crystal,
+      result->AttackerLosses.Deuterium);
+  printf("Defender losses: %ld, %ld, %ld\n",
+      result->DefenderLosses.Metal,
+      result->DefenderLosses.Crystal,
+      result->DefenderLosses.Deuterium);
+  printf("Debris: %ld, %ld, %ld\n",
+      result->Debris.Metal,
+      result->Debris.Crystal,
+      result->Debris.Deuterium);
+  printf("Recycler: %d\n", result->Recycler);
+  printf("Moonchance: %d%%\n", result->Moonchance);
+}
+
+void JsonPrintResults(Result *result) {
+  JSON_Value *root_value = json_value_init_object();
+  JSON_Object *root_object = json_value_get_object(root_value);
+  char *serialized_string = NULL;
+  json_object_set_number(root_object, "simulations", result->Simulations);
+  json_object_set_number(root_object, "attacker_win", result->AttackerWin);
+  json_object_set_number(root_object, "defender_win", result->DefenderWin);
+  json_object_set_number(root_object, "draw", result->Draw);
+  json_object_set_number(root_object, "rounds", result->Rounds);
+  json_object_dotset_number(root_object, "attacker_losses.metal", result->AttackerLosses.Metal);
+  json_object_dotset_number(root_object, "attacker_losses.crystal", result->AttackerLosses.Crystal);
+  json_object_dotset_number(root_object, "attacker_losses.deuterium", result->AttackerLosses.Deuterium);
+  json_object_dotset_number(root_object, "defender_losses.metal", result->DefenderLosses.Metal);
+  json_object_dotset_number(root_object, "defender_losses.crystal", result->DefenderLosses.Crystal);
+  json_object_dotset_number(root_object, "defender_losses.deuterium", result->DefenderLosses.Deuterium);
+  json_object_dotset_number(root_object, "debris.metal", result->Debris.Metal);
+  json_object_dotset_number(root_object, "debris.crystal", result->Debris.Crystal);
+  json_object_dotset_number(root_object, "debris.deuterium", result->Debris.Deuterium);
+  json_object_set_number(root_object, "recycler", result->Recycler);
+  json_object_set_number(root_object, "moonchance", result->Moonchance);
+  serialized_string = json_serialize_to_string_pretty(root_value);
+  puts(serialized_string);
+  json_free_serialized_string(serialized_string);
+  json_value_free(root_value);
+}
+
 int main(int argc, char *argv[]) {
 
   bool jsonOutput = false;
@@ -1004,56 +1064,32 @@ int main(int argc, char *argv[]) {
     printf("Simulations %d/%d\n\n", nbSimulations, nbSimulations);
   }
 
-  rounds = rounds/nbSimulations;
-  attackerWin = (int)roundf((float)attackerWin/(float)nbSimulations * 100);
-  defenderWin = (int)roundf((float)defenderWin/(float)nbSimulations * 100);
-  draw = (int)roundf((float)draw/(float)nbSimulations * 100);
-  int recycler = (int)(ceil(((float)(debris.Metal + debris.Crystal) / (float)nbSimulations) / 20000.0));
-  moonchance = (int)((float)moonchance / (float)nbSimulations);
+  Result result;
+  result.Simulations = nbSimulations;
+  result.Rounds = rounds/nbSimulations;
+  result.AttackerWin = (int)roundf((float)attackerWin/(float)nbSimulations * 100);
+  result.DefenderWin = (int)roundf((float)defenderWin/(float)nbSimulations * 100);
+  result.Draw = (int)roundf((float)draw/(float)nbSimulations * 100);
+  result.Recycler = (int)(ceil(((float)(debris.Metal + debris.Crystal) / (float)nbSimulations) / 20000.0));
+  result.Moonchance = (int)((float)moonchance / (float)nbSimulations);
+  result.AttackerLosses = NewPrice(
+      attackerLosses.Metal / nbSimulations,
+      attackerLosses.Crystal / nbSimulations,
+      attackerLosses.Deuterium / nbSimulations);
+  result.DefenderLosses = NewPrice(
+      defenderLosses.Metal / nbSimulations,
+      defenderLosses.Crystal / nbSimulations,
+      defenderLosses.Deuterium / nbSimulations);
+  result.Debris = NewPrice(
+      debris.Metal / nbSimulations,
+      debris.Crystal / nbSimulations,
+      debris.Deuterium / nbSimulations);
+
 
   if (jsonOutput) {
-    JSON_Value *root_value = json_value_init_object();
-    JSON_Object *root_object = json_value_get_object(root_value);
-    char *serialized_string = NULL;
-    json_object_set_number(root_object, "simulations", nbSimulations);
-    json_object_set_number(root_object, "attacker_win", attackerWin);
-    json_object_set_number(root_object, "defender_win", defenderWin);
-    json_object_set_number(root_object, "draw", draw);
-    json_object_set_number(root_object, "rounds", rounds);
-    json_object_dotset_number(root_object, "attacker_losses.metal", attackerLosses.Metal/nbSimulations);
-    json_object_dotset_number(root_object, "attacker_losses.crystal", attackerLosses.Crystal/nbSimulations);
-    json_object_dotset_number(root_object, "attacker_losses.deuterium", attackerLosses.Deuterium/nbSimulations);
-    json_object_dotset_number(root_object, "defender_losses.metal", defenderLosses.Metal/nbSimulations);
-    json_object_dotset_number(root_object, "defender_losses.crystal", defenderLosses.Crystal/nbSimulations);
-    json_object_dotset_number(root_object, "defender_losses.deuterium", defenderLosses.Deuterium/nbSimulations);
-    json_object_dotset_number(root_object, "debris.metal", debris.Metal/nbSimulations);
-    json_object_dotset_number(root_object, "debris.crystal", debris.Crystal/nbSimulations);
-    json_object_dotset_number(root_object, "debris.deuterium", debris.Deuterium/nbSimulations);
-    json_object_set_number(root_object, "recycler", recycler);
-    json_object_set_number(root_object, "moonchance", moonchance);
-    serialized_string = json_serialize_to_string_pretty(root_value);
-    puts(serialized_string);
-    json_free_serialized_string(serialized_string);
-    json_value_free(root_value);
+    JsonPrintResults(&result);
   } else {
-    printf("Results (%d simulations | ~%d rounds)\n", nbSimulations, rounds);
-    printf("Attacker win: %d%%\n", attackerWin);
-    printf("Defender win: %d%%\n", defenderWin);
-    printf("Draw: %d%%\n", draw);
-    printf("Attacker losses: %ld, %ld, %ld\n",
-        attackerLosses.Metal/nbSimulations,
-        attackerLosses.Crystal/nbSimulations,
-        attackerLosses.Deuterium/nbSimulations);
-    printf("Defender losses: %ld, %ld, %ld\n",
-        defenderLosses.Metal/nbSimulations,
-        defenderLosses.Crystal/nbSimulations,
-        defenderLosses.Deuterium/nbSimulations);
-    printf("Debris: %ld, %ld, %ld\n",
-        debris.Metal/nbSimulations,
-        debris.Crystal/nbSimulations,
-        debris.Deuterium/nbSimulations);
-    printf("Recycler: %d\n", recycler);
-    printf("Moonchance: %d%%\n", moonchance);
+    PrettyPrintResults(&result);
   }
 
 
