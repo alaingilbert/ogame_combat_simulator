@@ -70,75 +70,99 @@ type Entity struct {
 	PlasmaTurret    int
 	SmallShieldDome int
 	LargeShieldDome int
+	TotalUnits      int
 	Units           []ICombatUnit
 }
 
 func (e *Entity) Init() {
+	idx := 0
 	for i := 0; i < e.SmallCargo; i++ {
-		e.Units = append(e.Units, units.NewSmallCargo())
+		e.Units[idx] = units.NewSmallCargo()
+		idx++
 	}
 	for i := 0; i < e.LargeCargo; i++ {
-		e.Units = append(e.Units, units.NewLargeCargo())
+		e.Units[idx] = units.NewLargeCargo()
+		idx++
 	}
 	for i := 0; i < e.LightFighter; i++ {
-		e.Units = append(e.Units, units.NewLightFighter())
+		e.Units[idx] = units.NewLightFighter()
+		idx++
 	}
 	for i := 0; i < e.HeavyFighter; i++ {
-		e.Units = append(e.Units, units.NewHeavyFighter())
+		e.Units[idx] = units.NewHeavyFighter()
+		idx++
 	}
 	for i := 0; i < e.Cruiser; i++ {
-		e.Units = append(e.Units, units.NewCruiser())
+		e.Units[idx] = units.NewCruiser()
+		idx++
 	}
 	for i := 0; i < e.Battleship; i++ {
-		e.Units = append(e.Units, units.NewBattleship())
+		e.Units[idx] = units.NewBattleship()
+		idx++
 	}
 	for i := 0; i < e.ColonyShip; i++ {
-		e.Units = append(e.Units, units.NewColonyShip())
+		e.Units[idx] = units.NewColonyShip()
+		idx++
 	}
 	for i := 0; i < e.Recycler; i++ {
-		e.Units = append(e.Units, units.NewRecycler())
+		e.Units[idx] = units.NewRecycler()
+		idx++
 	}
 	for i := 0; i < e.EspionageProbe; i++ {
-		e.Units = append(e.Units, units.NewEspionageProbe())
+		e.Units[idx] = units.NewEspionageProbe()
+		idx++
 	}
 	for i := 0; i < e.Bomber; i++ {
-		e.Units = append(e.Units, units.NewBomber())
+		e.Units[idx] = units.NewBomber()
+		idx++
 	}
 	for i := 0; i < e.SolarSatellite; i++ {
-		e.Units = append(e.Units, units.NewSolarSatellite())
+		e.Units[idx] = units.NewSolarSatellite()
+		idx++
 	}
 	for i := 0; i < e.Destroyer; i++ {
-		e.Units = append(e.Units, units.NewDestroyer())
+		e.Units[idx] = units.NewDestroyer()
+		idx++
 	}
 	for i := 0; i < e.Deathstar; i++ {
-		e.Units = append(e.Units, units.NewDeathstar())
+		e.Units[idx] = units.NewDeathstar()
+		idx++
 	}
 	for i := 0; i < e.Battlecruiser; i++ {
-		e.Units = append(e.Units, units.NewBattlecruiser())
+		e.Units[idx] = units.NewBattlecruiser()
+		idx++
 	}
 	for i := 0; i < e.RocketLauncher; i++ {
-		e.Units = append(e.Units, units.NewRocketLauncher())
+		e.Units[idx] = units.NewRocketLauncher()
+		idx++
 	}
 	for i := 0; i < e.LightLaser; i++ {
-		e.Units = append(e.Units, units.NewLightLaser())
+		e.Units[idx] = units.NewLightLaser()
+		idx++
 	}
 	for i := 0; i < e.HeavyLaser; i++ {
-		e.Units = append(e.Units, units.NewHeavyLaser())
+		e.Units[idx] = units.NewHeavyLaser()
+		idx++
 	}
 	for i := 0; i < e.GaussCannon; i++ {
-		e.Units = append(e.Units, units.NewGaussCannon())
+		e.Units[idx] = units.NewGaussCannon()
+		idx++
 	}
 	for i := 0; i < e.IonCannon; i++ {
-		e.Units = append(e.Units, units.NewIonCannon())
+		e.Units[idx] = units.NewIonCannon()
+		idx++
 	}
 	for i := 0; i < e.PlasmaTurret; i++ {
-		e.Units = append(e.Units, units.NewPlasmaTurret())
+		e.Units[idx] = units.NewPlasmaTurret()
+		idx++
 	}
 	for i := 0; i < e.SmallShieldDome; i++ {
-		e.Units = append(e.Units, units.NewSmallShieldDome())
+		e.Units[idx] = units.NewSmallShieldDome()
+		idx++
 	}
 	for i := 0; i < e.LargeShieldDome; i++ {
-		e.Units = append(e.Units, units.NewLargeShieldDome())
+		e.Units[idx] = units.NewLargeShieldDome()
+		idx++
 	}
 }
 
@@ -254,12 +278,16 @@ func (simulator *CombatSimulator) attack(attackingUnit, defendingUnit ICombatUni
 	}
 }
 
-func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []ICombatUnit) {
+func (simulator *CombatSimulator) unitsFires(attacker Entity, defender Entity) {
 	rand.Seed(time.Now().UnixNano())
-	for _, unit := range attackingUnits {
+	for i := 0; i < attacker.TotalUnits; i++ {
+		unit := attacker.Units[i]
 		rapidFire := true
 		for rapidFire {
-			targetUnit := defendingUnits[rand.Intn(len(defendingUnits))]
+			if defender.TotalUnits == 0 {
+				break
+			}
+			targetUnit := defender.Units[rand.Intn(defender.TotalUnits)]
 			rapidFire = simulator.getAnotherShot(unit, targetUnit)
 			if targetUnit.IsAlive() {
 				simulator.attack(unit, targetUnit)
@@ -269,14 +297,14 @@ func (simulator *CombatSimulator) unitsFires(attackingUnits, defendingUnits []IC
 }
 
 func (simulator *CombatSimulator) AttackerFires() {
-	if len(simulator.Defender.Units) == 0 {
+	if simulator.Defender.TotalUnits <= 0 {
 		return
 	}
-	simulator.unitsFires(simulator.Attacker.Units, simulator.Defender.Units)
+	simulator.unitsFires(simulator.Attacker, simulator.Defender)
 }
 
 func (simulator *CombatSimulator) DefenderFires() {
-	simulator.unitsFires(simulator.Defender.Units, simulator.Attacker.Units)
+	simulator.unitsFires(simulator.Defender, simulator.Attacker)
 }
 
 func isShip(unit ICombatUnit) bool {
@@ -292,7 +320,7 @@ func isShip(unit ICombatUnit) bool {
 }
 
 func (simulator *CombatSimulator) RemoveDestroyedUnits() {
-	l := len(simulator.Defender.Units)
+	l := simulator.Defender.TotalUnits
 	for i := l - 1; i >= 0; i-- {
 		unit := simulator.Defender.Units[i]
 		if unit.GetHullPlating() <= 0 {
@@ -301,14 +329,15 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 				simulator.Debris.Crystal += int(simulator.FleetToDebris * float64(unit.GetPrice().Crystal))
 			}
 			simulator.DefenderLosses.Add(unit.GetPrice())
-			simulator.Defender.Units[i] = simulator.Defender.Units[len(simulator.Defender.Units)-1]
-			simulator.Defender.Units = simulator.Defender.Units[:len(simulator.Defender.Units)-1]
+			simulator.Defender.Units[i] = simulator.Defender.Units[simulator.Defender.TotalUnits-1]
+			simulator.Defender.TotalUnits--
+			//simulator.Defender.Units = simulator.Defender.Units[:len(simulator.Defender.Units)-1]
 			if simulator.IsLogging {
 				fmt.Println(fmt.Sprintf("%s lost all its integrity, remove from battle", unit.GetName()))
 			}
 		}
 	}
-	l = len(simulator.Attacker.Units)
+	l = simulator.Attacker.TotalUnits
 	for i := l - 1; i >= 0; i-- {
 		unit := simulator.Attacker.Units[i]
 		if unit.GetHullPlating() <= 0 {
@@ -317,8 +346,9 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 				simulator.Debris.Crystal += int(simulator.FleetToDebris * float64(unit.GetPrice().Crystal))
 			}
 			simulator.AttackerLosses.Add(unit.GetPrice())
-			simulator.Attacker.Units[i] = simulator.Attacker.Units[len(simulator.Attacker.Units)-1]
-			simulator.Attacker.Units = simulator.Attacker.Units[:len(simulator.Attacker.Units)-1]
+			simulator.Attacker.Units[i] = simulator.Attacker.Units[simulator.Attacker.TotalUnits-1]
+			simulator.Attacker.TotalUnits--
+			//simulator.Attacker.Units = simulator.Attacker.Units[:len(simulator.Attacker.Units)-1]
 			if simulator.IsLogging {
 				fmt.Println(fmt.Sprintf("%s lost all its integrity, remove from battle", unit.GetName()))
 			}
@@ -327,13 +357,15 @@ func (simulator *CombatSimulator) RemoveDestroyedUnits() {
 }
 
 func (simulator *CombatSimulator) RestoreShields() {
-	for _, unit := range simulator.Attacker.Units {
+	for i := 0; i < simulator.Attacker.TotalUnits; i++ {
+		unit := simulator.Attacker.Units[i]
 		unit.RestoreShield()
 		if simulator.IsLogging {
 			fmt.Println(fmt.Sprintf("%s still has integrity, restore its shield", unit.GetName()))
 		}
 	}
-	for _, unit := range simulator.Defender.Units {
+	for i := 0; i < simulator.Defender.TotalUnits; i++ {
+		unit := simulator.Defender.Units[i]
 		unit.RestoreShield()
 		if simulator.IsLogging {
 			fmt.Println(fmt.Sprintf("%s still has integrity, restore its shield", unit.GetName()))
@@ -342,7 +374,7 @@ func (simulator *CombatSimulator) RestoreShields() {
 }
 
 func (simulator *CombatSimulator) IsCombatDone() bool {
-	return len(simulator.Attacker.Units) == 0 || len(simulator.Defender.Units) == 0
+	return simulator.Attacker.TotalUnits <= 0 || simulator.Defender.TotalUnits <= 0
 }
 
 func (simulator *CombatSimulator) GetMoonchance() int {
@@ -351,12 +383,17 @@ func (simulator *CombatSimulator) GetMoonchance() int {
 }
 
 func (simulator *CombatSimulator) PrintWinner() {
-	if len(simulator.Attacker.Units) == 0 {
+	if simulator.Defender.TotalUnits <= 0 && simulator.Attacker.TotalUnits <= 0 {
+		simulator.Winner = "draw"
+		if simulator.IsLogging {
+			fmt.Println("The battle ended draw.")
+		}
+	} else if simulator.Attacker.TotalUnits <= 0 {
 		simulator.Winner = "defender"
 		if simulator.IsLogging {
 			fmt.Println(fmt.Sprintf("The battle ended after %d rounds with %s winning", simulator.Rounds, simulator.Winner))
 		}
-	} else if len(simulator.Defender.Units) == 0 {
+	} else if simulator.Defender.TotalUnits <= 0 {
 		simulator.Winner = "attacker"
 		if simulator.IsLogging {
 			fmt.Println(fmt.Sprintf("The battle ended after %d rounds with %s winning", simulator.Rounds, simulator.Winner))
@@ -496,6 +533,33 @@ func printResult(result map[string]interface{}) {
 	table.Render()
 }
 
+func (e *Entity) Reset() {
+	e.TotalUnits = 0
+	e.TotalUnits += e.SmallCargo
+	e.TotalUnits += e.SmallCargo
+	e.TotalUnits += e.LargeCargo
+	e.TotalUnits += e.LightFighter
+	e.TotalUnits += e.HeavyFighter
+	e.TotalUnits += e.Cruiser
+	e.TotalUnits += e.Battleship
+	e.TotalUnits += e.ColonyShip
+	e.TotalUnits += e.Recycler
+	e.TotalUnits += e.EspionageProbe
+	e.TotalUnits += e.Bomber
+	e.TotalUnits += e.SolarSatellite
+	e.TotalUnits += e.Destroyer
+	e.TotalUnits += e.Deathstar
+	e.TotalUnits += e.Battlecruiser
+	e.TotalUnits += e.RocketLauncher
+	e.TotalUnits += e.LightLaser
+	e.TotalUnits += e.HeavyLaser
+	e.TotalUnits += e.GaussCannon
+	e.TotalUnits += e.IonCannon
+	e.TotalUnits += e.PlasmaTurret
+	e.TotalUnits += e.SmallShieldDome
+	e.TotalUnits += e.LargeShieldDome
+}
+
 func start(c *cli.Context) error {
 	configPath := c.String("config")
 	jsonOutput := c.Bool("json")
@@ -555,6 +619,8 @@ func start(c *cli.Context) error {
 	attacker.PlasmaTurret = 0
 	attacker.SmallShieldDome = 0
 	attacker.LargeShieldDome = 0
+	attacker.Reset()
+	attacker.Units = make([]ICombatUnit, attacker.TotalUnits+1, attacker.TotalUnits+1)
 
 	defender := NewEntity()
 	defender.Weapon = conf.Defender.Weapon
@@ -582,10 +648,15 @@ func start(c *cli.Context) error {
 	defender.PlasmaTurret = conf.Defender.PlasmaTurret
 	defender.SmallShieldDome = conf.Defender.SmallShieldDome
 	defender.LargeShieldDome = conf.Defender.LargeShieldDome
+	defender.Reset()
+	defender.Units = make([]ICombatUnit, defender.TotalUnits+1, defender.TotalUnits+1)
+
+	cs := NewCombatSimulator(attacker, defender)
+	cs.IsLogging = conf.IsLogging
 
 	for i := 0; i < nbSimulations; i++ {
-		cs := NewCombatSimulator(attacker, defender)
-		cs.IsLogging = conf.IsLogging
+		attacker.Reset()
+		defender.Reset()
 
 		cs.Simulate()
 		bar.Increment()
