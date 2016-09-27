@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include <math.h>
 #include <unistd.h>
-#include "./lib/ini/ini.h"
-#include "./lib/parson/parson.h"
+#include "../lib/ini/ini.h"
+#include "../lib/parson/parson.h"
 
 bool SHOULD_LOG = false;
 
