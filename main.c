@@ -900,11 +900,19 @@ void ConfigDefender(Entity *defender, const configuration *config) {
 int main(int argc, char *argv[]) {
 
   bool jsonOutput = false;
+  char *configPath = "config.ini";
   int opt;
 
-  while ((opt = getopt(argc, argv, "j")) != -1) {
+  while ((opt = getopt(argc, argv, "jc:")) != -1) {
     switch (opt) {
       case 'j': jsonOutput = true; break;
+      case 'c': configPath = optarg; break;
+      case '?':
+        if (optopt == 'c') {
+          fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+          exit(EXIT_FAILURE);
+        }
+        break;
       default:
         fprintf(stderr, "Usage: %s [-ilw] [file...]\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -914,8 +922,8 @@ int main(int argc, char *argv[]) {
   srand(time(NULL));
   configuration config;
 
-  if (ini_parse("test.ini", handler, &config) < 0) {
-    printf("Can't load 'test.ini'\n");
+  if (ini_parse(configPath, handler, &config) < 0) {
+    printf("Can't load '%s'\n", configPath);
     return 1;
   }
 
