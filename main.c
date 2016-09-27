@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "./ini.h"
+#include "./parson.h"
 
 bool SHOULD_LOG = false;
 

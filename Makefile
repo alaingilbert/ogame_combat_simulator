@@ -1,2 +1,2 @@
 all:
-	gcc -O3 -march=native main.c ini.c -o main
+	gcc -O3 -march=native main.c ini.c parson.c -o main
