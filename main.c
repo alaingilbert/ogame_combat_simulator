@@ -938,7 +938,7 @@ int main(int argc, char *argv[]) {
   int defenderWin = 0;
   int draw = 0;
   int rounds = 0;
-  int moonChance = 0;
+  int moonchance = 0;
   Price attackerLosses = NewPrice(0, 0, 0);
   Price defenderLosses = NewPrice(0, 0, 0);
   Price debris = NewPrice(0, 0, 0);
@@ -958,6 +958,8 @@ int main(int argc, char *argv[]) {
     AddPrice(&defenderLosses, simulator->Defender->Losses);
     AddPrice(&debris, simulator->Debris);
     rounds += simulator->Rounds;
+    int debris = (float)simulator->Debris.Metal + (float)simulator->Debris.Crystal;
+    moonchance += (int)(fmin(debris/100000.0f, 20.0f));
 
     free(attacker->Units);
     free(defender->Units);
@@ -966,6 +968,8 @@ int main(int argc, char *argv[]) {
   attackerWin = (int)roundf((float)attackerWin/(float)nbSimulations * 100);
   defenderWin = (int)roundf((float)defenderWin/(float)nbSimulations * 100);
   draw = (int)roundf((float)draw/(float)nbSimulations * 100);
+  int recycler = (int)(ceil(((float)(debris.Metal + debris.Crystal) / (float)nbSimulations) / 20000.0));
+  moonchance = (int)((float)moonchance / (float)nbSimulations);
 
   if (jsonOutput) {
     JSON_Value *root_value = json_value_init_object();
@@ -985,6 +989,8 @@ int main(int argc, char *argv[]) {
     json_object_dotset_number(root_object, "debris.metal", debris.Metal/nbSimulations);
     json_object_dotset_number(root_object, "debris.crystal", debris.Crystal/nbSimulations);
     json_object_dotset_number(root_object, "debris.deuterium", debris.Deuterium/nbSimulations);
+    json_object_set_number(root_object, "recycler", recycler);
+    json_object_set_number(root_object, "moonchance", moonchance);
     serialized_string = json_serialize_to_string_pretty(root_value);
     puts(serialized_string);
     json_free_serialized_string(serialized_string);
@@ -1006,6 +1012,8 @@ int main(int argc, char *argv[]) {
         debris.Metal/nbSimulations,
         debris.Crystal/nbSimulations,
         debris.Deuterium/nbSimulations);
+    printf("Recycler: %d\n", recycler);
+    printf("Moonchance: %d%%\n", moonchance);
   }
 
 
