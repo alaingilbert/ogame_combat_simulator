@@ -234,7 +234,7 @@ CombatUnit NewUnit(Entity *entity, int OgameID) {
   return unit;
 }
 
-void InitEntity(Entity *entity) {
+void ResetEntity(Entity *entity) {
   entity->Losses = NewPrice(0, 0, 0);
 
   entity->TotalUnits = 0;
@@ -260,57 +260,58 @@ void InitEntity(Entity *entity) {
   entity->TotalUnits += entity->PlasmaTurret;
   entity->TotalUnits += entity->SmallShieldDome;
   entity->TotalUnits += entity->LargeShieldDome;
+}
 
-  CombatUnit *units = malloc(sizeof(CombatUnit) * entity->TotalUnits);
+void InitEntity(Entity *entity) {
+  ResetEntity(entity);
+
   int i;
   int idx = 0;
 
   for (i=0; i<entity->SmallCargo; i++)
-    units[idx++] = NewUnit(entity, SMALL_CARGO);
+    entity->Units[idx++] = NewUnit(entity, SMALL_CARGO);
   for (i=0; i<entity->LargeCargo; i++)
-    units[idx++] = NewUnit(entity, LARGE_CARGO);
+    entity->Units[idx++] = NewUnit(entity, LARGE_CARGO);
   for (i=0; i<entity->LightFighter; i++)
-    units[idx++] = NewUnit(entity, LIGHT_FIGHTER);
+    entity->Units[idx++] = NewUnit(entity, LIGHT_FIGHTER);
   for (i=0; i<entity->HeavyFighter; i++)
-    units[idx++] = NewUnit(entity, HEAVY_FIGHTER);
+    entity->Units[idx++] = NewUnit(entity, HEAVY_FIGHTER);
   for (i=0; i<entity->Cruiser; i++)
-    units[idx++] = NewUnit(entity, CRUISER);
+    entity->Units[idx++] = NewUnit(entity, CRUISER);
   for (i=0; i<entity->Battleship; i++)
-    units[idx++] = NewUnit(entity, BATTLESHIP);
+    entity->Units[idx++] = NewUnit(entity, BATTLESHIP);
   for (i=0; i<entity->ColonyShip; i++)
-    units[idx++] = NewUnit(entity, COLONY_SHIP);
+    entity->Units[idx++] = NewUnit(entity, COLONY_SHIP);
   for (i=0; i<entity->Recycler; i++)
-    units[idx++] = NewUnit(entity, RECYCLER);
+    entity->Units[idx++] = NewUnit(entity, RECYCLER);
   for (i=0; i<entity->EspionageProbe; i++)
-    units[idx++] = NewUnit(entity, ESPIONAGE_PROBE);
+    entity->Units[idx++] = NewUnit(entity, ESPIONAGE_PROBE);
   for (i=0; i<entity->Bomber; i++)
-    units[idx++] = NewUnit(entity, BOMBER);
+    entity->Units[idx++] = NewUnit(entity, BOMBER);
   for (i=0; i<entity->SolarSatellite; i++)
-    units[idx++] = NewUnit(entity, SOLAR_SATELLITE);
+    entity->Units[idx++] = NewUnit(entity, SOLAR_SATELLITE);
   for (i=0; i<entity->Destroyer; i++)
-    units[idx++] = NewUnit(entity, DESTROYER);
+    entity->Units[idx++] = NewUnit(entity, DESTROYER);
   for (i=0; i<entity->Deathstar; i++)
-    units[idx++] = NewUnit(entity, DEATHSTAR);
+    entity->Units[idx++] = NewUnit(entity, DEATHSTAR);
   for (i=0; i<entity->Battlecruiser; i++)
-    units[idx++] = NewUnit(entity, BATTLECRUISER);
+    entity->Units[idx++] = NewUnit(entity, BATTLECRUISER);
   for (i=0; i<entity->RocketLauncher; i++)
-    units[idx++] = NewUnit(entity, ROCKET_LAUNCHER);
+    entity->Units[idx++] = NewUnit(entity, ROCKET_LAUNCHER);
   for (i=0; i<entity->LightLaser; i++)
-    units[idx++] = NewUnit(entity, LIGHT_LASER);
+    entity->Units[idx++] = NewUnit(entity, LIGHT_LASER);
   for (i=0; i<entity->HeavyLaser; i++)
-    units[idx++] = NewUnit(entity, HEAVY_LASER);
+    entity->Units[idx++] = NewUnit(entity, HEAVY_LASER);
   for (i=0; i<entity->GaussCannon; i++)
-    units[idx++] = NewUnit(entity, GAUSS_CANNON);
+    entity->Units[idx++] = NewUnit(entity, GAUSS_CANNON);
   for (i=0; i<entity->IonCannon; i++)
-    units[idx++] = NewUnit(entity, ION_CANNON);
+    entity->Units[idx++] = NewUnit(entity, ION_CANNON);
   for (i=0; i<entity->PlasmaTurret; i++)
-    units[idx++] = NewUnit(entity, PLASMA_TURRET);
+    entity->Units[idx++] = NewUnit(entity, PLASMA_TURRET);
   for (i=0; i<entity->SmallShieldDome; i++)
-    units[idx++] = NewUnit(entity, SMALL_SHIELD_DOME);
+    entity->Units[idx++] = NewUnit(entity, SMALL_SHIELD_DOME);
   for (i=0; i<entity->LargeShieldDome; i++)
-    units[idx++] = NewUnit(entity, LARGE_SHIELD_DOME);
-
-  entity->Units = units;
+    entity->Units[idx++] = NewUnit(entity, LARGE_SHIELD_DOME);
 }
 
 bool IsAlive(CombatUnit *unit) {
@@ -897,6 +898,27 @@ void ConfigDefender(Entity *defender, const configuration *config) {
   defender->LargeShieldDome = config->DefenderLargeShieldDome;
 }
 
+Entity* NewAttacker(const configuration *config) {
+  Entity *attacker = malloc(sizeof(Entity));
+  ConfigAttacker(attacker, config);
+  ResetEntity(attacker);
+  attacker->Units = malloc(sizeof(CombatUnit) * attacker->TotalUnits);
+  return attacker;
+}
+
+Entity* NewDefender(const configuration *config) {
+  Entity *defender = malloc(sizeof(Entity));
+  ConfigDefender(defender, config);
+  ResetEntity(defender);
+  defender->Units = malloc(sizeof(CombatUnit) * defender->TotalUnits);
+  return defender;
+}
+
+void FreeEntity(Entity *entity) {
+  free(entity->Units);
+  free(entity);
+}
+
 int main(int argc, char *argv[]) {
 
   bool jsonOutput = false;
@@ -930,11 +952,8 @@ int main(int argc, char *argv[]) {
   SHOULD_LOG = config.SimulatorLogging;
   int nbSimulations = config.Simulations;
 
-  Entity *defender = malloc(sizeof(Entity));
-  Entity *attacker = malloc(sizeof(Entity));
-
-  ConfigAttacker(attacker, &config);
-  ConfigDefender(defender, &config);
+  Entity *defender = NewDefender(&config);
+  Entity *attacker = NewAttacker(&config);
 
   Simulator *simulator = malloc(sizeof(Simulator));
   simulator->FleetToDebris = 0.3;
@@ -979,9 +998,6 @@ int main(int argc, char *argv[]) {
     rounds += simulator->Rounds;
     int debris = (float)simulator->Debris.Metal + (float)simulator->Debris.Crystal;
     moonchance += (int)(fmin(debris/100000.0f, 20.0f));
-
-    free(attacker->Units);
-    free(defender->Units);
   }
 
   if (!jsonOutput) {
@@ -1041,8 +1057,8 @@ int main(int argc, char *argv[]) {
   }
 
 
-  free(attacker);
-  free(defender);
+  FreeEntity(attacker);
+  FreeEntity(defender);
   free(simulator);
 
   return 0;
