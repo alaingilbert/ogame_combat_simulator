@@ -951,11 +951,22 @@ int main(int argc, char *argv[]) {
   Price defenderLosses = NewPrice(0, 0, 0);
   Price debris = NewPrice(0, 0, 0);
 
+  if (!jsonOutput) {
+    printf("Simulations 0/%d\r", nbSimulations);
+    fflush(stdout);
+  }
+
   int i;
   for (i=0; i<nbSimulations; i++) {
     simulator->Rounds = 0;
     simulator->Debris = NewPrice(0, 0, 0);
     Simulate(simulator);
+
+    if (!jsonOutput) {
+      printf("Simulations %d/%d\r", i, nbSimulations);
+      fflush(stdout);
+    }
+
     if (simulator->Winner == 0)
       attackerWin++;
     else if (simulator->Winner == 1)
@@ -973,6 +984,11 @@ int main(int argc, char *argv[]) {
     free(defender->Units);
   }
 
+  if (!jsonOutput) {
+    printf("Simulations %d/%d\n\n", nbSimulations, nbSimulations);
+  }
+
+  rounds = rounds/nbSimulations;
   attackerWin = (int)roundf((float)attackerWin/(float)nbSimulations * 100);
   defenderWin = (int)roundf((float)defenderWin/(float)nbSimulations * 100);
   draw = (int)roundf((float)draw/(float)nbSimulations * 100);
@@ -987,7 +1003,7 @@ int main(int argc, char *argv[]) {
     json_object_set_number(root_object, "attacker_win", attackerWin);
     json_object_set_number(root_object, "defender_win", defenderWin);
     json_object_set_number(root_object, "draw", draw);
-    json_object_set_number(root_object, "rounds", rounds/nbSimulations);
+    json_object_set_number(root_object, "rounds", rounds);
     json_object_dotset_number(root_object, "attacker_losses.metal", attackerLosses.Metal/nbSimulations);
     json_object_dotset_number(root_object, "attacker_losses.crystal", attackerLosses.Crystal/nbSimulations);
     json_object_dotset_number(root_object, "attacker_losses.deuterium", attackerLosses.Deuterium/nbSimulations);
@@ -1004,7 +1020,7 @@ int main(int argc, char *argv[]) {
     json_free_serialized_string(serialized_string);
     json_value_free(root_value);
   } else {
-    printf("Simulations: %d\n", nbSimulations);
+    printf("Results (%d simulations | ~%d rounds)\n", nbSimulations, rounds);
     printf("Attacker win: %d%%\n", attackerWin);
     printf("Defender win: %d%%\n", defenderWin);
     printf("Draw: %d%%\n", draw);
