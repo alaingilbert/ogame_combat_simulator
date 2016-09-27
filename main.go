@@ -527,18 +527,23 @@ func start(c *cli.Context) error {
 	}
 
 	nbSimulations := conf.Simulations
-	nbWorkers := conf.Workers
-	workChan := make(chan *CombatSimulator, nbSimulations)
-	resChan := make(chan *CombatSimulator, nbSimulations)
 
-	for i := 0; i < nbWorkers; i++ {
-		go func(ch chan *CombatSimulator) {
-			for cs := range ch {
-				cs.Simulate()
-				resChan <- cs
-			}
-		}(workChan)
+	bar := pb.New(nbSimulations)
+	bar.ShowTimeLeft = false
+	bar.SetWidth(80)
+	if !jsonOutput {
+		fmt.Println("Simulations:")
+		bar.Start()
 	}
+
+	attackerWin := 0
+	defenderWin := 0
+	draw := 0
+	attackerLosses := units.Price{}
+	defenderLosses := units.Price{}
+	debris := units.Price{}
+	rounds := 0
+	moonchance := 0
 
 	for i := 0; i < nbSimulations; i++ {
 		attacker := NewAttacker()
@@ -589,29 +594,9 @@ func start(c *cli.Context) error {
 		cs := NewCombatSimulator(attacker, defender)
 		cs.IsLogging = conf.IsLogging
 
-		workChan <- cs
-	}
-
-	bar := pb.New(nbSimulations)
-	bar.ShowTimeLeft = false
-	bar.SetWidth(80)
-	if !jsonOutput {
-		fmt.Println("Simulations:")
-		bar.Start()
-	}
-
-	attackerWin := 0
-	defenderWin := 0
-	draw := 0
-	attackerLosses := units.Price{}
-	defenderLosses := units.Price{}
-	debris := units.Price{}
-	rounds := 0
-	moonchance := 0
-
-	for i := 0; i < nbSimulations; i++ {
-		cs := <-resChan
+		cs.Simulate()
 		bar.Increment()
+
 		if cs.Winner == "attacker" {
 			attackerWin++
 		} else if cs.Winner == "defender" {
@@ -625,6 +610,7 @@ func start(c *cli.Context) error {
 		rounds += cs.Rounds
 		moonchance += cs.GetMoonchance()
 	}
+
 	if !jsonOutput {
 		bar.Finish()
 		fmt.Println("")
