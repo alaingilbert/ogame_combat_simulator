@@ -979,6 +979,21 @@ void JsonPrintResults(Result *result) {
   json_value_free(root_value);
 }
 
+Simulator* simulator_new(configuration *config) {
+  Entity *defender = NewDefender(config);
+  Entity *attacker = NewAttacker(config);
+  Simulator *simulator = malloc(sizeof(Simulator));
+  simulator->Attacker = attacker;
+  simulator->Defender = defender;
+  return simulator;
+}
+
+void simulator_free(Simulator *simulator) {
+  FreeEntity(simulator->Attacker);
+  FreeEntity(simulator->Defender);
+  free(simulator);
+}
+
 int main(int argc, char *argv[]) {
 
   bool jsonOutput = false;
@@ -1012,14 +1027,10 @@ int main(int argc, char *argv[]) {
   SHOULD_LOG = config.SimulatorLogging;
   int nbSimulations = config.Simulations;
 
-  Entity *defender = NewDefender(&config);
-  Entity *attacker = NewAttacker(&config);
 
-  Simulator *simulator = malloc(sizeof(Simulator));
+  Simulator *simulator = simulator_new(&config);
   simulator->FleetToDebris = 0.3;
   simulator->MaxRounds = 6;
-  simulator->Attacker = attacker;
-  simulator->Defender = defender;
 
   int attackerWin = 0;
   int defenderWin = 0;
@@ -1092,10 +1103,7 @@ int main(int argc, char *argv[]) {
     PrettyPrintResults(&result);
   }
 
-
-  FreeEntity(attacker);
-  FreeEntity(defender);
-  free(simulator);
+  simulator_free(simulator);
 
   return 0;
 }
