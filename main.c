@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
+#include <unistd.h>
 #include "./ini.h"
 #include "./parson.h"
 
@@ -897,6 +898,19 @@ void ConfigDefender(Entity *defender, const configuration *config) {
 }
 
 int main(int argc, char *argv[]) {
+
+  bool jsonOutput = false;
+  int opt;
+
+  while ((opt = getopt(argc, argv, "j")) != -1) {
+    switch (opt) {
+      case 'j': jsonOutput = true; break;
+      default:
+        fprintf(stderr, "Usage: %s [-ilw] [file...]\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+  }
+
   srand(time(NULL));
   configuration config;
 
