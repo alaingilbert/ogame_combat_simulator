@@ -42,35 +42,26 @@ type ICombatUnit interface {
 }
 
 type Entity struct {
-	Weapon         int
-	Shield         int
-	Armour         int
-	SmallCargo     int
-	LargeCargo     int
-	LightFighter   int
-	HeavyFighter   int
-	Cruiser        int
-	Battleship     int
-	ColonyShip     int
-	Recycler       int
-	EspionageProbe int
-	Bomber         int
-	SolarSatellite int
-	Destroyer      int
-	Deathstar      int
-	Battlecruiser  int
-	Units          []ICombatUnit
-}
-
-type Attacker struct {
-	Entity
-	Combustion int
-	Impulse    int
-	Hyperspace int
-}
-
-type Defender struct {
-	Entity
+	Weapon          int
+	Shield          int
+	Armour          int
+	Combustion      int
+	Impulse         int
+	Hyperspace      int
+	SmallCargo      int
+	LargeCargo      int
+	LightFighter    int
+	HeavyFighter    int
+	Cruiser         int
+	Battleship      int
+	ColonyShip      int
+	Recycler        int
+	EspionageProbe  int
+	Bomber          int
+	SolarSatellite  int
+	Destroyer       int
+	Deathstar       int
+	Battlecruiser   int
 	RocketLauncher  int
 	LightLaser      int
 	HeavyLaser      int
@@ -79,6 +70,7 @@ type Defender struct {
 	PlasmaTurret    int
 	SmallShieldDome int
 	LargeShieldDome int
+	Units           []ICombatUnit
 }
 
 func (e *Entity) Init() {
@@ -124,10 +116,6 @@ func (e *Entity) Init() {
 	for i := 0; i < e.Battlecruiser; i++ {
 		e.Units = append(e.Units, units.NewBattlecruiser())
 	}
-}
-
-func (e *Defender) Init() {
-	e.Entity.Init()
 	for i := 0; i < e.RocketLauncher; i++ {
 		e.Units = append(e.Units, units.NewRocketLauncher())
 	}
@@ -154,17 +142,13 @@ func (e *Defender) Init() {
 	}
 }
 
-func NewAttacker() *Attacker {
-	return new(Attacker)
-}
-
-func NewDefender() *Defender {
-	return new(Defender)
+func NewEntity() *Entity {
+	return new(Entity)
 }
 
 type CombatSimulator struct {
-	Attacker       Attacker
-	Defender       Defender
+	Attacker       Entity
+	Defender       Entity
 	MaxRounds      int
 	Rounds         int
 	FleetToDebris  float64
@@ -406,7 +390,7 @@ func (simulator *CombatSimulator) Simulate() {
 	simulator.PrintWinner()
 }
 
-func NewCombatSimulator(attacker *Attacker, defender *Defender) *CombatSimulator {
+func NewCombatSimulator(attacker *Entity, defender *Entity) *CombatSimulator {
 	cs := new(CombatSimulator)
 	cs.Attacker = *attacker
 	cs.Defender = *defender
@@ -545,7 +529,7 @@ func start(c *cli.Context) error {
 	rounds := 0
 	moonchance := 0
 
-	attacker := NewAttacker()
+	attacker := NewEntity()
 	attacker.Weapon = conf.Attacker.Weapon
 	attacker.Shield = conf.Attacker.Shield
 	attacker.Armour = conf.Attacker.Armour
@@ -559,11 +543,20 @@ func start(c *cli.Context) error {
 	attacker.Recycler = conf.Attacker.Recycler
 	attacker.EspionageProbe = conf.Attacker.EspionageProbe
 	attacker.Bomber = conf.Attacker.Bomber
+	attacker.SolarSatellite = 0
 	attacker.Destroyer = conf.Attacker.Destroyer
 	attacker.Deathstar = conf.Attacker.Deathstar
 	attacker.Battlecruiser = conf.Attacker.Battlecruiser
+	attacker.RocketLauncher = 0
+	attacker.LightLaser = 0
+	attacker.HeavyLaser = 0
+	attacker.GaussCannon = 0
+	attacker.IonCannon = 0
+	attacker.PlasmaTurret = 0
+	attacker.SmallShieldDome = 0
+	attacker.LargeShieldDome = 0
 
-	defender := NewDefender()
+	defender := NewEntity()
 	defender.Weapon = conf.Defender.Weapon
 	defender.Shield = conf.Defender.Shield
 	defender.Armour = conf.Defender.Armour
