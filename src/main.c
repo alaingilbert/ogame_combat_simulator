@@ -914,7 +914,7 @@ Entity* NewDefender(const configuration *config) {
   return defender;
 }
 
-void FreeEntity(Entity *entity) {
+void entity_free(Entity *entity) {
   free(entity->Units);
   free(entity);
 }
@@ -989,8 +989,8 @@ Simulator* simulator_new(configuration *config) {
 }
 
 void simulator_free(Simulator *simulator) {
-  FreeEntity(simulator->Attacker);
-  FreeEntity(simulator->Defender);
+  entity_free(simulator->Attacker);
+  entity_free(simulator->Defender);
   free(simulator);
 }
 
