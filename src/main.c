@@ -111,7 +111,7 @@ Price NewPrice(int metal, int crystal, int deuterium) {
   return price;
 }
 
-CombatUnit NewUnit(Entity *entity, int OgameID) {
+CombatUnit NewUnit(const Entity *entity, int OgameID) {
   CombatUnit unit;
   unit.Id = 1;
   unit.OgameID = OgameID;
@@ -314,11 +314,11 @@ void InitEntity(Entity *entity) {
     entity->Units[idx++] = NewUnit(entity, LARGE_SHIELD_DOME);
 }
 
-bool IsAlive(CombatUnit *unit) {
+bool IsAlive(const CombatUnit *unit) {
   return unit->HullPlating > 0;
 }
 
-char *UnitToString(CombatUnit *unit) {
+char *UnitToString(const CombatUnit *unit) {
   char *msg = malloc(sizeof(char) * 100);
   if (unit->OgameID == ROCKET_LAUNCHER)
     strcpy(msg, "RocketLauncher with ");
@@ -332,11 +332,11 @@ char *UnitToString(CombatUnit *unit) {
   return msg;
 }
 
-float RollDice() {
+float RollDice(void) {
   return (float)rand()/(float)(RAND_MAX/1);
 }
 
-bool HasExploded(CombatUnit *unit) {
+bool HasExploded(const CombatUnit *unit) {
   bool exploded = false;
   float hullPercentage = (float)unit->HullPlating / (float)unit->InitialHullPlating;
   if (hullPercentage <= 0.7) {
@@ -359,7 +359,7 @@ bool HasExploded(CombatUnit *unit) {
   return exploded;
 }
 
-int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
+int GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targetUnit) {
   int rf = 0;
   switch(unit->OgameID) {
     case SMALL_CARGO:
@@ -468,7 +468,7 @@ int GetRapidFireAgainst(CombatUnit *unit, CombatUnit *targetUnit) {
   return rf;
 }
 
-bool GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
+bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
   bool rapidFire = true;
   int rf = GetRapidFireAgainst(unit, targetUnit);
   if (rf > 0) {
@@ -496,7 +496,7 @@ bool GetAnotherShot(CombatUnit *unit, CombatUnit *targetUnit) {
   return rapidFire;
 }
 
-void Attack(CombatUnit *unit, CombatUnit *targetUnit) {
+void Attack(const CombatUnit *unit, CombatUnit *targetUnit) {
   if (SHOULD_LOG) {
     char *attackingString = UnitToString(unit);
     char *targetString = UnitToString(targetUnit);
@@ -553,7 +553,7 @@ void unitsFires(Entity *attacker, Entity *defender) {
   }
 }
 
-bool IsCombatDone(Entity *attacker, Entity *defender) {
+bool IsCombatDone(const Entity *attacker, const Entity *defender) {
   return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
 }
 
@@ -563,7 +563,7 @@ void AddPrice(Price *losses, const Price price) {
   losses->Deuterium += price.Deuterium;
 }
 
-bool IsShip(CombatUnit *unit) {
+bool IsShip(const CombatUnit *unit) {
   switch(unit->OgameID) {
     case SMALL_CARGO:
     case LARGE_CARGO:
@@ -932,7 +932,7 @@ typedef struct {
   Price Debris;
 } Result;
 
-void PrettyPrintResults(Result *result) {
+void PrettyPrintResults(const Result *result) {
   printf("Results (%d simulations | ~%d rounds)\n", result->Simulations, result->Rounds);
   printf("Attacker win: %d%%\n", result->AttackerWin);
   printf("Defender win: %d%%\n", result->DefenderWin);
@@ -953,7 +953,7 @@ void PrettyPrintResults(Result *result) {
   printf("Moonchance: %d%%\n", result->Moonchance);
 }
 
-void JsonPrintResults(Result *result) {
+void JsonPrintResults(const Result *result) {
   JSON_Value *root_value = json_value_init_object();
   JSON_Object *root_object = json_value_get_object(root_value);
   char *serialized_string = NULL;
@@ -979,7 +979,7 @@ void JsonPrintResults(Result *result) {
   json_value_free(root_value);
 }
 
-Simulator* simulator_new(configuration *config) {
+Simulator* simulator_new(const configuration *config) {
   Entity *defender = NewDefender(config);
   Entity *attacker = NewAttacker(config);
   Simulator *simulator = malloc(sizeof(Simulator));
