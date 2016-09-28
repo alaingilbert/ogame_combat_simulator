@@ -36,9 +36,9 @@ typedef enum {
 } ships;
 
 typedef struct {
-  long Metal;
-  long Crystal;
-  long Deuterium;
+  unsigned long Metal;
+  unsigned long Crystal;
+  unsigned long Deuterium;
 } Price;
 
 typedef struct {
@@ -937,15 +937,15 @@ void PrettyPrintResults(const Result *result) {
   printf("Attacker win: %d%%\n", result->AttackerWin);
   printf("Defender win: %d%%\n", result->DefenderWin);
   printf("Draw: %d%%\n", result->Draw);
-  printf("Attacker losses: %ld, %ld, %ld\n",
+  printf("Attacker losses: %lu, %lu, %lu\n",
       result->AttackerLosses.Metal,
       result->AttackerLosses.Crystal,
       result->AttackerLosses.Deuterium);
-  printf("Defender losses: %ld, %ld, %ld\n",
+  printf("Defender losses: %lu, %lu, %lu\n",
       result->DefenderLosses.Metal,
       result->DefenderLosses.Crystal,
       result->DefenderLosses.Deuterium);
-  printf("Debris: %ld, %ld, %ld\n",
+  printf("Debris: %lu, %lu, %lu\n",
       result->Debris.Metal,
       result->Debris.Crystal,
       result->Debris.Deuterium);
@@ -1067,7 +1067,7 @@ int main(int argc, char *argv[]) {
     AddPrice(&defenderLosses, simulator->Defender->Losses);
     AddPrice(&debris, simulator->Debris);
     rounds += simulator->Rounds;
-    int debris = (float)simulator->Debris.Metal + (float)simulator->Debris.Crystal;
+    float debris = (float)simulator->Debris.Metal + (float)simulator->Debris.Crystal;
     moonchance += (int)(fmin(debris/100000.0f, 20.0f));
   }
 
