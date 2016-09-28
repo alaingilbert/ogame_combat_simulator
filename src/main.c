@@ -42,7 +42,6 @@ typedef struct {
 } Price;
 
 typedef struct {
-  int Id;
   int OgameID;
   int WeaponPower;
   int ShieldPower;
@@ -113,7 +112,6 @@ Price NewPrice(unsigned long long metal, unsigned long long crystal, unsigned lo
 
 CombatUnit NewUnit(const Entity *entity, int OgameID) {
   CombatUnit unit;
-  unit.Id = 1;
   unit.OgameID = OgameID;
   switch(OgameID) {
     case SMALL_CARGO:
