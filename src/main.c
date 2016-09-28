@@ -49,7 +49,6 @@ typedef struct {
   int InitialShield;
   int HullPlating;
   int InitialHullPlating;
-  Price Price;
 } CombatUnit;
 
 typedef struct {
@@ -110,6 +109,34 @@ Price NewPrice(unsigned long long metal, unsigned long long crystal, unsigned lo
   return price;
 }
 
+Price GetUnitPrice(int ogameId) {
+  switch(ogameId) {
+    case SMALL_CARGO:       return NewPrice(   2000,    2000,       0);
+    case LARGE_CARGO:       return NewPrice(   6000,    6000,       0);
+    case LIGHT_FIGHTER:     return NewPrice(   3000,    1000,       0);
+    case HEAVY_FIGHTER:     return NewPrice(   6000,    4000,       0);
+    case CRUISER:           return NewPrice(  20000,    7000,    2000);
+    case BATTLESHIP:        return NewPrice(  45000,   15000,       0);
+    case COLONY_SHIP:       return NewPrice(  10000,   20000,   10000);
+    case RECYCLER:          return NewPrice(  10000,    6000,    2000);
+    case ESPIONAGE_PROBE:   return NewPrice(      0,    1000,       0);
+    case BOMBER:            return NewPrice(  50000,   25000,   15000);
+    case SOLAR_SATELLITE:   return NewPrice(      0,    2000,     500);
+    case DESTROYER:         return NewPrice(  60000,   50000,   15000);
+    case DEATHSTAR:         return NewPrice(5000000, 4000000, 1000000);
+    case BATTLECRUISER:     return NewPrice(  30000,   40000,   15000);
+    case ROCKET_LAUNCHER:   return NewPrice(   2000,       0,       0);
+    case LIGHT_LASER:       return NewPrice(   1500,     500,       0);
+    case HEAVY_LASER:       return NewPrice(   6000,    2000,       0);
+    case GAUSS_CANNON:      return NewPrice(  20000,   15000,    2000);
+    case ION_CANNON:        return NewPrice(   2000,    6000,       0);
+    case PLASMA_TURRET:     return NewPrice(  50000,   50000,   30000);
+    case SMALL_SHIELD_DOME: return NewPrice(  10000,   10000,       0);
+    case LARGE_SHIELD_DOME: return NewPrice(  50000,   50000,       0);
+  }
+  return NewPrice(0, 0, 0);
+}
+
 CombatUnit NewUnit(const Entity *entity, int OgameID) {
   CombatUnit unit;
   unit.OgameID = OgameID;
@@ -117,115 +144,94 @@ CombatUnit NewUnit(const Entity *entity, int OgameID) {
     case SMALL_CARGO:
       unit.ShieldPower = 10;
       unit.WeaponPower = 5;
-      unit.Price = NewPrice(2000, 2000, 0);
       break;
     case LARGE_CARGO:
       unit.ShieldPower = 25;
       unit.WeaponPower = 5;
-      unit.Price = NewPrice(6000, 6000, 0);
       break;
     case LIGHT_FIGHTER:
       unit.ShieldPower = 10;
       unit.WeaponPower = 50;
-      unit.Price = NewPrice(3000, 1000, 0);
       break;
     case HEAVY_FIGHTER:
       unit.ShieldPower = 25;
       unit.WeaponPower = 150;
-      unit.Price = NewPrice(6000, 4000, 0);
       break;
     case CRUISER:
       unit.ShieldPower = 50;
       unit.WeaponPower = 400;
-      unit.Price = NewPrice(20000, 7000, 2000);
       break;
     case BATTLESHIP:
       unit.ShieldPower = 200;
       unit.WeaponPower = 1000;
-      unit.Price = NewPrice(45000, 15000, 0);
       break;
     case COLONY_SHIP:
       unit.ShieldPower = 100;
       unit.WeaponPower = 50;
-      unit.Price = NewPrice(10000, 20000, 10000);
       break;
     case RECYCLER:
       unit.ShieldPower = 10;
       unit.WeaponPower = 1;
-      unit.Price = NewPrice(10000, 6000, 2000);
       break;
     case ESPIONAGE_PROBE:
       unit.ShieldPower = 1; // 0.01
       unit.WeaponPower = 1; // 0.01
-      unit.Price = NewPrice(0, 1000, 0);
       break;
     case BOMBER:
       unit.ShieldPower = 500;
       unit.WeaponPower = 1000;
-      unit.Price = NewPrice(50000, 25000, 15000);
       break;
     case SOLAR_SATELLITE:
       unit.ShieldPower = 1;
       unit.WeaponPower = 1;
-      unit.Price = NewPrice(0, 2000, 500);
       break;
     case DESTROYER:
       unit.ShieldPower = 500;
       unit.WeaponPower = 2000;
-      unit.Price = NewPrice(60000, 50000, 15000);
       break;
     case DEATHSTAR:
       unit.ShieldPower = 50000;
       unit.WeaponPower = 200000;
-      unit.Price = NewPrice(5000000, 4000000, 1000000);
       break;
     case BATTLECRUISER:
       unit.ShieldPower = 400;
       unit.WeaponPower = 700;
-      unit.Price = NewPrice(30000, 40000, 15000);
       break;
     case ROCKET_LAUNCHER:
       unit.ShieldPower = 20;
       unit.WeaponPower = 80;
-      unit.Price = NewPrice(2000, 0, 0);
       break;
     case LIGHT_LASER:
       unit.ShieldPower = 25;
       unit.WeaponPower = 100;
-      unit.Price = NewPrice(1500, 500, 0);
       break;
     case HEAVY_LASER:
       unit.ShieldPower = 100;
       unit.WeaponPower = 250;
-      unit.Price = NewPrice(6000, 2000, 0);
       break;
     case GAUSS_CANNON:
       unit.ShieldPower = 200;
       unit.WeaponPower = 1100;
-      unit.Price = NewPrice(20000, 15000, 2000);
       break;
     case ION_CANNON:
       unit.ShieldPower = 500;
       unit.WeaponPower = 150;
-      unit.Price = NewPrice(2000, 6000, 0);
       break;
     case PLASMA_TURRET:
       unit.ShieldPower = 300;
       unit.WeaponPower = 3000;
-      unit.Price = NewPrice(50000, 50000, 30000);
       break;
     case SMALL_SHIELD_DOME:
       unit.ShieldPower = 2000;
       unit.WeaponPower = 1;
-      unit.Price = NewPrice(10000, 10000, 0);
       break;
     case LARGE_SHIELD_DOME:
       unit.ShieldPower = 10000;
       unit.WeaponPower = 1;
-      unit.Price = NewPrice(50000, 50000, 0);
       break;
   }
-  unit.InitialHullPlating = (1 + (entity->Armour / 10)) * ((unit.Price.Metal + unit.Price.Crystal) / 10);
+  Price unitPrice = GetUnitPrice(OgameID);
+  unit.InitialHullPlating = (1 + (entity->Armour / 10)) * ((unitPrice.Metal + unitPrice.Crystal) / 10);
   unit.HullPlating = unit.InitialHullPlating;
   unit.InitialShield = unit.ShieldPower * (1 + 0.1 * entity->Shield);
   unit.Shield = unit.InitialShield;
@@ -589,11 +595,12 @@ void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (unit->HullPlating <= 0) {
+      Price unitPrice = GetUnitPrice(unit->OgameID);
       if (IsShip(unit)) {
-        simulator->Debris.Metal += simulator->FleetToDebris * unit->Price.Metal;
-        simulator->Debris.Crystal += simulator->FleetToDebris * unit->Price.Crystal;
+        simulator->Debris.Metal += simulator->FleetToDebris * unitPrice.Metal;
+        simulator->Debris.Crystal += simulator->FleetToDebris * unitPrice.Crystal;
       }
-      AddPrice(&entity->Losses, unit->Price);
+      AddPrice(&entity->Losses, unitPrice);
       entity->Units[i] = entity->Units[entity->TotalUnits-1];
       entity->TotalUnits--;
     }
