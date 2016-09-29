@@ -57,7 +57,7 @@ typedef struct {
 
 const unsigned short ID_MASK = 31;
 const unsigned long SHIELD_MASK = 8388576;
-const unsigned long HULL_MASK = 35184363700224;
+const unsigned long long HULL_MASK = 35184363700224;
 
 typedef struct {
   unsigned long long PackedInfos;
