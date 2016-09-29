@@ -136,27 +136,27 @@ Price GetUnitPrice(unsigned short ogameId) {
 
 long GetUnitBaseShield(unsigned short ogameId) {
   switch(ogameId) {
-    case SMALL_CARGO:       return 10;
-    case LARGE_CARGO:       return 25;
-    case LIGHT_FIGHTER:     return 10;
-    case HEAVY_FIGHTER:     return 25;
-    case CRUISER:           return 50;
-    case BATTLESHIP:        return 200;
-    case COLONY_SHIP:       return 100;
-    case RECYCLER:          return 10;
-    case ESPIONAGE_PROBE:   return 1; // 0.01
-    case BOMBER:            return 500;
-    case SOLAR_SATELLITE:   return 1;
-    case DESTROYER:         return 500;
+    case SMALL_CARGO:       return    10;
+    case LARGE_CARGO:       return    25;
+    case LIGHT_FIGHTER:     return    10;
+    case HEAVY_FIGHTER:     return    25;
+    case CRUISER:           return    50;
+    case BATTLESHIP:        return   200;
+    case COLONY_SHIP:       return   100;
+    case RECYCLER:          return    10;
+    case ESPIONAGE_PROBE:   return     1; // 0.01
+    case BOMBER:            return   500;
+    case SOLAR_SATELLITE:   return     1;
+    case DESTROYER:         return   500;
     case DEATHSTAR:         return 50000;
-    case BATTLECRUISER:     return 400;
-    case ROCKET_LAUNCHER:   return 20;
-    case LIGHT_LASER:       return 25;
-    case HEAVY_LASER:       return 100;
-    case GAUSS_CANNON:      return 200;
-    case ION_CANNON:        return 500;
-    case PLASMA_TURRET:     return 300;
-    case SMALL_SHIELD_DOME: return 2000;
+    case BATTLECRUISER:     return   400;
+    case ROCKET_LAUNCHER:   return    20;
+    case LIGHT_LASER:       return    25;
+    case HEAVY_LASER:       return   100;
+    case GAUSS_CANNON:      return   200;
+    case ION_CANNON:        return   500;
+    case PLASMA_TURRET:     return   300;
+    case SMALL_SHIELD_DOME: return  2000;
     case LARGE_SHIELD_DOME: return 10000;
   }
   return 0;
@@ -164,28 +164,28 @@ long GetUnitBaseShield(unsigned short ogameId) {
 
 unsigned long GetUnitBaseWeapon(unsigned short ogameId) {
   switch(ogameId) {
-    case SMALL_CARGO:       return 5;
-    case LARGE_CARGO:       return 5;
-    case LIGHT_FIGHTER:     return 50;
-    case HEAVY_FIGHTER:     return 150;
-    case CRUISER:           return 400;
-    case BATTLESHIP:        return 1000;
-    case COLONY_SHIP:       return 50;
-    case RECYCLER:          return 1;
-    case ESPIONAGE_PROBE:   return 1; // 0.01
-    case BOMBER:            return 1000;
-    case SOLAR_SATELLITE:   return 1;
-    case DESTROYER:         return 2000;
+    case SMALL_CARGO:       return      5;
+    case LARGE_CARGO:       return      5;
+    case LIGHT_FIGHTER:     return     50;
+    case HEAVY_FIGHTER:     return    150;
+    case CRUISER:           return    400;
+    case BATTLESHIP:        return   1000;
+    case COLONY_SHIP:       return     50;
+    case RECYCLER:          return      1;
+    case ESPIONAGE_PROBE:   return      1; // 0.01
+    case BOMBER:            return   1000;
+    case SOLAR_SATELLITE:   return      1;
+    case DESTROYER:         return   2000;
     case DEATHSTAR:         return 200000;
-    case BATTLECRUISER:     return 700;
-    case ROCKET_LAUNCHER:   return 80;
-    case LIGHT_LASER:       return 100;
-    case HEAVY_LASER:       return 250;
-    case GAUSS_CANNON:      return 1100;
-    case ION_CANNON:        return 150;
-    case PLASMA_TURRET:     return 3000;
-    case SMALL_SHIELD_DOME: return 1;
-    case LARGE_SHIELD_DOME: return 1;
+    case BATTLECRUISER:     return    700;
+    case ROCKET_LAUNCHER:   return     80;
+    case LIGHT_LASER:       return    100;
+    case HEAVY_LASER:       return    250;
+    case GAUSS_CANNON:      return   1100;
+    case ION_CANNON:        return    150;
+    case PLASMA_TURRET:     return   3000;
+    case SMALL_SHIELD_DOME: return      1;
+    case LARGE_SHIELD_DOME: return      1;
   }
   return 0;
 }
