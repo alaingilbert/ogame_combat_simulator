@@ -190,6 +190,35 @@ unsigned long GetUnitBaseWeapon(unsigned short ogameId) {
   return 0;
 }
 
+char * GetUnitName(unsigned short ogameId) {
+  switch(ogameId) {
+    case SMALL_CARGO:       return "Small cargo";
+    case LARGE_CARGO:       return "Large cargo";
+    case LIGHT_FIGHTER:     return "Light fighter";
+    case HEAVY_FIGHTER:     return "Heavy fighter";
+    case CRUISER:           return "Cruiser";
+    case BATTLESHIP:        return "Battleship";
+    case COLONY_SHIP:       return "Colony ship";
+    case RECYCLER:          return "Recycler";
+    case ESPIONAGE_PROBE:   return "Expionage probe";
+    case BOMBER:            return "Bomber";
+    case SOLAR_SATELLITE:   return "Solar satellite";
+    case DESTROYER:         return "Destroyer";
+    case DEATHSTAR:         return "Deathstar";
+    case BATTLECRUISER:     return "Battlecruiser";
+    case ROCKET_LAUNCHER:   return "Rocket launcher";
+    case LIGHT_LASER:       return "Light laser";
+    case HEAVY_LASER:       return "Heavy laser";
+    case GAUSS_CANNON:      return "Gauss cannon";
+    case ION_CANNON:        return "Ion cannon";
+    case PLASMA_TURRET:     return "Plasma turret";
+    case SMALL_SHIELD_DOME: return "Small shield dome";
+    case LARGE_SHIELD_DOME: return "Large shield dome";
+  }
+  return "";
+}
+
+
 unsigned long GetUnitWeaponPower(const unsigned short ogameId, const short weaponTechno) {
   return GetUnitBaseWeapon(ogameId) * (1 + 0.1 * weaponTechno);
 }
@@ -297,12 +326,9 @@ bool IsAlive(const CombatUnit *unit) {
 
 char * UnitToString(const CombatUnit *unit, const Entity *entity) {
   char *msg = malloc(sizeof(char) * 100);
-  if (unit->OgameID == ROCKET_LAUNCHER)
-    strcpy(msg, "RocketLauncher with ");
-  if (unit->OgameID == HEAVY_LASER)
-    strcpy(msg, "HeavyLaser with ");
-  if (unit->OgameID == CRUISER)
-    strcpy(msg, "Cruiser with ");
+  char *unitName = GetUnitName(unit->OgameID);
+  strcpy(msg, unitName);
+  strcat(msg, " with ");
   char buffer[20];
   unsigned long weapon = GetUnitWeaponPower(unit->OgameID, entity->Weapon);
   sprintf(buffer, "%ld:%ld:%ld", unit->HullPlating, unit->Shield, weapon);
@@ -469,7 +495,7 @@ bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
     }
   } else {
     if (SHOULD_LOG) {
-      printf("%d doesn't have rapid fire against %d.\n", unit->OgameID, targetUnit->OgameID);
+      printf("%s doesn't have rapid fire against %s.\n", GetUnitName(unit->OgameID), GetUnitName(targetUnit->OgameID));
     }
     rapidFire = false;
   }
