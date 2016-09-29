@@ -485,7 +485,7 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
   unsigned long weapon = GetUnitWeaponPower(unit->OgameID, attacker->Weapon);
   unsigned long targetInitialShield = GetUnitInitialShield(unit->OgameID, defender->Shield);
   // Check for shot bounce
-  if (weapon < 0.01 * targetInitialShield) {
+  if (weapon * 100 < targetInitialShield) {
     if (SHOULD_LOG) {
       printf("shot bounced\n");
     }
