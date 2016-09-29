@@ -202,7 +202,7 @@ unsigned long GetUnitInitialHullPlating(const short armourTechno, const long met
   return (1 + (armourTechno / 10)) * ((metalPrice + crystalPrice) / 10);
 }
 
-CombatUnit NewUnit(const Entity *entity, int OgameID) {
+CombatUnit NewUnit(const Entity *entity, unsigned short OgameID) {
   CombatUnit unit;
   unit.OgameID = OgameID;
   Price unitPrice = GetUnitPrice(OgameID);
