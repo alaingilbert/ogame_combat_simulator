@@ -144,8 +144,8 @@ Price NewPrice(const unsigned long long metal, const unsigned long long crystal,
   return price;
 }
 
-Price GetUnitPrice(unsigned short ogameId) {
-  switch(ogameId) {
+Price GetUnitPrice(unsigned short unitId) {
+  switch(unitId) {
     case SMALL_CARGO:       return NewPrice(   2000,    2000,       0);
     case LARGE_CARGO:       return NewPrice(   6000,    6000,       0);
     case LIGHT_FIGHTER:     return NewPrice(   3000,    1000,       0);
@@ -172,8 +172,8 @@ Price GetUnitPrice(unsigned short ogameId) {
   return NewPrice(0, 0, 0);
 }
 
-long GetUnitBaseShield(unsigned short ogameId) {
-  switch(ogameId) {
+long GetUnitBaseShield(unsigned short unitId) {
+  switch(unitId) {
     case SMALL_CARGO:       return    10;
     case LARGE_CARGO:       return    25;
     case LIGHT_FIGHTER:     return    10;
@@ -200,8 +200,8 @@ long GetUnitBaseShield(unsigned short ogameId) {
   return 0;
 }
 
-unsigned long GetUnitBaseWeapon(unsigned short ogameId) {
-  switch(ogameId) {
+unsigned long GetUnitBaseWeapon(unsigned short unitId) {
+  switch(unitId) {
     case SMALL_CARGO:       return      5;
     case LARGE_CARGO:       return      5;
     case LIGHT_FIGHTER:     return     50;
@@ -228,8 +228,8 @@ unsigned long GetUnitBaseWeapon(unsigned short ogameId) {
   return 0;
 }
 
-char * GetUnitName(unsigned short ogameId) {
-  switch(ogameId) {
+char * GetUnitName(unsigned short unitId) {
+  switch(unitId) {
     case SMALL_CARGO:       return "Small cargo";
     case LARGE_CARGO:       return "Large cargo";
     case LIGHT_FIGHTER:     return "Light fighter";
@@ -257,24 +257,24 @@ char * GetUnitName(unsigned short ogameId) {
 }
 
 
-unsigned long GetUnitWeaponPower(const unsigned short ogameId, const short weaponTechno) {
-  return GetUnitBaseWeapon(ogameId) * (1 + 0.1 * weaponTechno);
+unsigned long GetUnitWeaponPower(const unsigned short unitId, const short weaponTechno) {
+  return GetUnitBaseWeapon(unitId) * (1 + 0.1 * weaponTechno);
 }
 
-unsigned long GetUnitInitialShield(const unsigned short ogameId, const short shieldTechno) {
-  return GetUnitBaseShield(ogameId) * (1 + 0.1 * shieldTechno);
+unsigned long GetUnitInitialShield(const unsigned short unitId, const short shieldTechno) {
+  return GetUnitBaseShield(unitId) * (1 + 0.1 * shieldTechno);
 }
 
 unsigned long GetUnitInitialHullPlating(const short armourTechno, const long metalPrice, const long crystalPrice) {
   return (1 + (armourTechno / 10)) * ((metalPrice + crystalPrice) / 10);
 }
 
-CombatUnit NewUnit(const Entity *entity, unsigned short OgameID) {
+CombatUnit NewUnit(const Entity *entity, unsigned short unitId) {
   CombatUnit unit;
-  SetUnitId(&unit, OgameID);
-  Price unitPrice = GetUnitPrice(OgameID);
+  SetUnitId(&unit, unitId);
+  Price unitPrice = GetUnitPrice(unitId);
   SetUnitHull(&unit, GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal));
-  SetUnitShield(&unit, GetUnitInitialShield(OgameID, entity->Shield));
+  SetUnitShield(&unit, GetUnitInitialShield(unitId, entity->Shield));
   return unit;
 }
 
