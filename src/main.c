@@ -45,16 +45,18 @@ typedef struct {
 // Id     ( 5b ->        31)
 // Shield (18b ->   262.144)
 // Hull   (22b -> 4.194.304)
-// Max hull: 2.700.000 (Armour level 20)
-// Max hull level: 36 -> 4.140.000
-// Max Shield: 150.000 (Shield level 20)
-// Max Shield level: 42 -> 260.000
+// Max armour: 2.700.000 (Armour level 20)
+// Max armour level: 36 -> 4.140.000
+// Max shield: 150.000 (Shield level 20)
+// Max shield level: 42 -> 260.000
 //
 // 00000000000000000000000000000000 00000000000000000000000000000000 // 64bits
 // 00000000000000000000000000000000 00000000000000000000000000011111 // Id                     31
 // 00000000000000000000000000000000 00000000011111111111111111100000 // Shield          8.388.576
 // 00000000000000000001111111111111 11111111100000000000000000000000 // Hull   35.184.363.700.224
 
+const unsigned short MAX_ARMOUR_LEVEL = 36;
+const unsigned short MAX_SHIELD_LEVEL = 42;
 const unsigned short ID_MASK = 31;
 const unsigned long SHIELD_MASK = 8388576;
 const unsigned long long HULL_MASK = 35184363700224;
@@ -1077,6 +1079,16 @@ int main(int argc, char *argv[]) {
 
   if (ini_parse(configPath, handler, &config) < 0) {
     printf("Can't load '%s'\n", configPath);
+    return 1;
+  }
+
+  if (config.AttackerArmour > MAX_ARMOUR_LEVEL || config.DefenderArmour > MAX_ARMOUR_LEVEL) {
+    printf("Maximum armour level is %d\n", MAX_ARMOUR_LEVEL);
+    return 1;
+  }
+
+  if (config.AttackerShield > MAX_SHIELD_LEVEL || config.DefenderShield > MAX_SHIELD_LEVEL) {
+    printf("Maximum shield level is %d\n", MAX_SHIELD_LEVEL);
     return 1;
   }
 
