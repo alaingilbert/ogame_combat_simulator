@@ -51,34 +51,38 @@ typedef struct {
 // 00000000000000000000000000000000 00000000011111111111111111100000 // Shield          8.388.576
 // 00000000000000000001111111111111 11111111100000000000000000000000 // Hull   35.184.363.700.224
 
+const unsigned short ID_MASK = 31;
+const unsigned long SHIELD_MASK = 8388576;
+const unsigned long HULL_MASK = 35184363700224;
+
 typedef struct {
   unsigned long long PackedInfos;
 } CombatUnit;
 
 unsigned short GetUnitId(const CombatUnit *unit) {
-  return (unit->PackedInfos & 31) >> 0;
+  return (unit->PackedInfos & ID_MASK) >> 0;
 }
 
 unsigned long GetUnitShield(const CombatUnit *unit) {
-  return (unit->PackedInfos & 8388576) >> 5;
+  return (unit->PackedInfos & SHIELD_MASK) >> 5;
 }
 
 unsigned long GetUnitHull(const CombatUnit *unit) {
-  return (unit->PackedInfos & 35184363700224) >> 23;
+  return (unit->PackedInfos & HULL_MASK) >> 23;
 }
 
 void SetUnitId(CombatUnit *unit, unsigned short id) {
-  unit->PackedInfos &= ~31;
+  unit->PackedInfos &= ~ID_MASK;
   unit->PackedInfos |= id << 0;
 }
 
 void SetUnitShield(CombatUnit *unit, unsigned long shield) {
-  unit->PackedInfos &= ~8388576;
+  unit->PackedInfos &= ~SHIELD_MASK;
   unit->PackedInfos |= shield << 5;
 }
 
 void SetUnitHull(CombatUnit *unit, unsigned long hull) {
-  unit->PackedInfos &= ~35184363700224;
+  unit->PackedInfos &= ~HULL_MASK;
   unit->PackedInfos |= hull << 23;
 }
 
