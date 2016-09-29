@@ -538,7 +538,7 @@ void unitsFires(Entity *attacker, Entity *defender) {
 }
 
 bool IsCombatDone(const Entity *attacker, const Entity *defender) {
-  return defender->TotalUnits <= 0 || attacker->TotalUnits <= 0;
+  return defender->TotalUnits == 0 || attacker->TotalUnits == 0;
 }
 
 void AddPrice(Price *losses, const Price price) {
@@ -571,7 +571,7 @@ bool IsShip(const CombatUnit *unit) {
 
 void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
   int i;
-  int l = entity->TotalUnits;
+  unsigned long l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (unit->HullPlating <= 0) {
@@ -594,7 +594,7 @@ void RemoveDestroyedUnits(Simulator *simulator) {
 
 void RestoreShields(Entity *entity) {
   int i;
-  int l = entity->TotalUnits;
+  unsigned long l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (SHOULD_LOG) {
@@ -607,18 +607,18 @@ void RestoreShields(Entity *entity) {
 }
 
 void PrintWinner(Simulator *simulator) {
-  if (simulator->Defender->TotalUnits <= 0 && simulator->Attacker->TotalUnits <= 0) {
+  if (simulator->Defender->TotalUnits == 0 && simulator->Attacker->TotalUnits == 0) {
     simulator->Winner = 2;
     if (SHOULD_LOG) {
       printf("The battle ended draw.\n");
     }
-  } else if (simulator->Defender->TotalUnits <= 0) {
+  } else if (simulator->Defender->TotalUnits == 0) {
     simulator->Winner = 0;
     if (SHOULD_LOG) {
       printf("The battle ended after %d rounds with attacker winning\n",
           simulator->Rounds);
     }
-  } else if (simulator->Attacker->TotalUnits <= 0) {
+  } else if (simulator->Attacker->TotalUnits == 0) {
     simulator->Winner = 1;
     if (SHOULD_LOG) {
       printf("The battle ended after %d rounds with defender winning\n",
