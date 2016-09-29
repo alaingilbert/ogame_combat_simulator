@@ -42,7 +42,7 @@ typedef struct {
 } Price;
 
 typedef struct {
-  int OgameID;
+  unsigned short OgameID;
   int WeaponPower;
   int ShieldPower;
   int Shield;
@@ -109,7 +109,7 @@ Price NewPrice(unsigned long long metal, unsigned long long crystal, unsigned lo
   return price;
 }
 
-Price GetUnitPrice(int ogameId) {
+Price GetUnitPrice(unsigned short ogameId) {
   switch(ogameId) {
     case SMALL_CARGO:       return NewPrice(   2000,    2000,       0);
     case LARGE_CARGO:       return NewPrice(   6000,    6000,       0);
