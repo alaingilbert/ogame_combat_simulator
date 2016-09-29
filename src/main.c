@@ -318,7 +318,7 @@ bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   Price unitPrice = GetUnitPrice(unit->OgameID);
   unsigned long unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
   float hullPercentage = (float)unit->HullPlating / (float)unitInitialHullPlating;
-  if (hullPercentage <= 0.7) {
+  if (hullPercentage < 0.7) {
     float probabilityOfExploding = 1.0 - hullPercentage;
     float dice = RollDice();
     if (SHOULD_LOG) {
