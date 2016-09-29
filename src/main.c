@@ -595,13 +595,13 @@ void RestoreShields(Entity *entity) {
   long i;
   unsigned long l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
-    CombatUnit *unit = &entity->Units[i];
+    CombatUnit unit = entity->Units[i];
     if (SHOULD_LOG) {
-      char *unitString = UnitToString(unit);
+      char *unitString = UnitToString(&unit);
       printf("%s still has integrity, restore its shield\n", unitString);
       free(unitString);
     }
-    unit->Shield = GetUnitInitialShield(unit->OgameID, entity->Shield);
+    unit.Shield = GetUnitInitialShield(unit.OgameID, entity->Shield);
   }
 }
 
