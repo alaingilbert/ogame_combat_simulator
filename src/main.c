@@ -242,8 +242,8 @@ void ResetEntity(Entity *entity) {
 void InitEntity(Entity *entity) {
   ResetEntity(entity);
 
-  int i;
-  int idx = 0;
+  unsigned long i;
+  unsigned long idx = 0;
 
   for (i=0; i<entity->SmallCargo; i++)
     entity->Units[idx++] = NewUnit(entity, SMALL_CARGO);
@@ -519,14 +519,14 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
 }
 
 void unitsFires(Entity *attacker, Entity *defender) {
-  int i;
+  unsigned long i;
   CombatUnit *attackingUnits = attacker->Units;
   CombatUnit *defendingUnits = defender->Units;
   for (i=0; i<attacker->TotalUnits; i++) {
     CombatUnit *unit = &attackingUnits[i];
     bool rapidFire = true;
     while (rapidFire) {
-      int random = rand() % defender->TotalUnits;
+      unsigned long random = rand() % defender->TotalUnits;
       CombatUnit *targetUnit = &defendingUnits[random];
       if (IsAlive(targetUnit)) {
         Attack(attacker, unit, defender, targetUnit);
@@ -569,7 +569,7 @@ bool IsShip(const CombatUnit *unit) {
 }
 
 void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
-  int i;
+  long i;
   unsigned long l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
@@ -592,7 +592,7 @@ void RemoveDestroyedUnits(Simulator *simulator) {
 }
 
 void RestoreShields(Entity *entity) {
-  int i;
+  long i;
   unsigned long l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
