@@ -43,7 +43,7 @@ typedef struct {
 
 typedef struct {
   unsigned short OgameID;
-  int WeaponPower;
+  long WeaponPower;
   int Shield;
   unsigned int InitialShield;
   int HullPlating;
@@ -164,77 +164,38 @@ unsigned int GetUnitBaseShield(unsigned short ogameId) {
   return 0;
 }
 
+long GetUnitBaseWeapon(unsigned short ogameId) {
+  switch(ogameId) {
+    case SMALL_CARGO:       return 5;
+    case LARGE_CARGO:       return 5;
+    case LIGHT_FIGHTER:     return 50;
+    case HEAVY_FIGHTER:     return 150;
+    case CRUISER:           return 400;
+    case BATTLESHIP:        return 1000;
+    case COLONY_SHIP:       return 50;
+    case RECYCLER:          return 1;
+    case ESPIONAGE_PROBE:   return 1; // 0.01
+    case BOMBER:            return 1000;
+    case SOLAR_SATELLITE:   return 1;
+    case DESTROYER:         return 2000;
+    case DEATHSTAR:         return 200000;
+    case BATTLECRUISER:     return 700;
+    case ROCKET_LAUNCHER:   return 80;
+    case LIGHT_LASER:       return 100;
+    case HEAVY_LASER:       return 250;
+    case GAUSS_CANNON:      return 1100;
+    case ION_CANNON:        return 150;
+    case PLASMA_TURRET:     return 3000;
+    case SMALL_SHIELD_DOME: return 1;
+    case LARGE_SHIELD_DOME: return 1;
+  }
+  return 0;
+}
+
 CombatUnit NewUnit(const Entity *entity, int OgameID) {
   CombatUnit unit;
   unit.OgameID = OgameID;
-  switch(OgameID) {
-    case SMALL_CARGO:
-      unit.WeaponPower = 5;
-      break;
-    case LARGE_CARGO:
-      unit.WeaponPower = 5;
-      break;
-    case LIGHT_FIGHTER:
-      unit.WeaponPower = 50;
-      break;
-    case HEAVY_FIGHTER:
-      unit.WeaponPower = 150;
-      break;
-    case CRUISER:
-      unit.WeaponPower = 400;
-      break;
-    case BATTLESHIP:
-      unit.WeaponPower = 1000;
-      break;
-    case COLONY_SHIP:
-      unit.WeaponPower = 50;
-      break;
-    case RECYCLER:
-      unit.WeaponPower = 1;
-      break;
-    case ESPIONAGE_PROBE:
-      unit.WeaponPower = 1; // 0.01
-      break;
-    case BOMBER:
-      unit.WeaponPower = 1000;
-      break;
-    case SOLAR_SATELLITE:
-      unit.WeaponPower = 1;
-      break;
-    case DESTROYER:
-      unit.WeaponPower = 2000;
-      break;
-    case DEATHSTAR:
-      unit.WeaponPower = 200000;
-      break;
-    case BATTLECRUISER:
-      unit.WeaponPower = 700;
-      break;
-    case ROCKET_LAUNCHER:
-      unit.WeaponPower = 80;
-      break;
-    case LIGHT_LASER:
-      unit.WeaponPower = 100;
-      break;
-    case HEAVY_LASER:
-      unit.WeaponPower = 250;
-      break;
-    case GAUSS_CANNON:
-      unit.WeaponPower = 1100;
-      break;
-    case ION_CANNON:
-      unit.WeaponPower = 150;
-      break;
-    case PLASMA_TURRET:
-      unit.WeaponPower = 3000;
-      break;
-    case SMALL_SHIELD_DOME:
-      unit.WeaponPower = 1;
-      break;
-    case LARGE_SHIELD_DOME:
-      unit.WeaponPower = 1;
-      break;
-  }
+  unit.WeaponPower = GetUnitBaseWeapon(OgameID) * (1 + 0.1 * entity->Weapon);
   Price unitPrice = GetUnitPrice(OgameID);
   unsigned int unitBaseShield = GetUnitBaseShield(OgameID);
   unit.InitialHullPlating = (1 + (entity->Armour / 10)) * ((unitPrice.Metal + unitPrice.Crystal) / 10);
@@ -337,7 +298,7 @@ char *UnitToString(const CombatUnit *unit) {
   if (unit->OgameID == CRUISER)
     strcpy(msg, "Cruiser with ");
   char buffer[20];
-  sprintf(buffer, "%d:%d:%d", unit->HullPlating, unit->Shield, unit->WeaponPower);
+  sprintf(buffer, "%d:%d:%ld", unit->HullPlating, unit->Shield, unit->WeaponPower);
   strcat(msg, buffer);
   return msg;
 }
@@ -514,8 +475,9 @@ void Attack(const CombatUnit *unit, CombatUnit *targetUnit) {
     free(attackingString);
     free(targetString);
   }
+  long weapon = unit->WeaponPower;
   // Check for shot bounce
-  if (unit->WeaponPower < 0.01*targetUnit->InitialShield) {
+  if (weapon < 0.01*targetUnit->InitialShield) {
     if (SHOULD_LOG) {
       printf("shot bounced\n");
     }
@@ -523,7 +485,6 @@ void Attack(const CombatUnit *unit, CombatUnit *targetUnit) {
   }
 
   // Attack target
-  int weapon = unit->WeaponPower;
   if (targetUnit->Shield < weapon) {
     weapon -= targetUnit->Shield;
     targetUnit->Shield = 0;
