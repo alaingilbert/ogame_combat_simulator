@@ -295,7 +295,7 @@ bool IsAlive(const CombatUnit *unit) {
   return unit->HullPlating > 0;
 }
 
-char *UnitToString(const CombatUnit *unit) {
+char *UnitToString(const CombatUnit *unit, const Entity *entity) {
   char *msg = malloc(sizeof(char) * 100);
   if (unit->OgameID == ROCKET_LAUNCHER)
     strcpy(msg, "RocketLauncher with ");
@@ -304,7 +304,8 @@ char *UnitToString(const CombatUnit *unit) {
   if (unit->OgameID == CRUISER)
     strcpy(msg, "Cruiser with ");
   char buffer[20];
-  //sprintf(buffer, "%ld:%ld:%ld", unit->HullPlating, unit->Shield, unit->WeaponPower);
+  unsigned long weapon = GetUnitWeaponPower(unit->OgameID, entity->Weapon);
+  sprintf(buffer, "%ld:%ld:%ld", unit->HullPlating, unit->Shield, weapon);
   strcat(msg, buffer);
   return msg;
 }
@@ -477,8 +478,8 @@ bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
 
 void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defender, CombatUnit *targetUnit) {
   if (SHOULD_LOG) {
-    char *attackingString = UnitToString(unit);
-    char *targetString = UnitToString(targetUnit);
+    char *attackingString = UnitToString(unit, attacker);
+    char *targetString = UnitToString(targetUnit, defender);
     printf("%s fires at %s; ", attackingString, targetString);
     free(attackingString);
     free(targetString);
@@ -505,7 +506,7 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
     targetUnit->Shield -= weapon;
   }
   if (SHOULD_LOG) {
-    char *targetString = UnitToString(targetUnit);
+    char *targetString = UnitToString(targetUnit, defender);
     printf("result is %s\n", targetString);
     free(targetString);
   }
@@ -597,7 +598,7 @@ void RestoreShields(Entity *entity) {
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (SHOULD_LOG) {
-      char *unitString = UnitToString(unit);
+      char *unitString = UnitToString(unit, entity);
       printf("%s still has integrity, restore its shield\n", unitString);
       free(unitString);
     }
