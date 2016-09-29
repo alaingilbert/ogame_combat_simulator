@@ -50,55 +50,55 @@ typedef struct {
 
 typedef struct {
   // Technos
-  int Weapon;
-  int Shield;
-  int Armour;
-  int Combustion;
-  int Impulse;
-  int Hyperspace;
+  unsigned short Weapon;
+  unsigned short Shield;
+  unsigned short Armour;
+  unsigned short Combustion;
+  unsigned short Impulse;
+  unsigned short Hyperspace;
 
   // Ships
-  int SmallCargo;
-  int LargeCargo;
-  int LightFighter;
-  int HeavyFighter;
-  int Cruiser;
-  int Battleship;
-  int ColonyShip;
-  int Recycler;
-  int EspionageProbe;
-  int Bomber;
-  int SolarSatellite;
-  int Destroyer;
-  int Deathstar;
-  int Battlecruiser;
+  unsigned long SmallCargo;
+  unsigned long LargeCargo;
+  unsigned long LightFighter;
+  unsigned long HeavyFighter;
+  unsigned long Cruiser;
+  unsigned long Battleship;
+  unsigned long ColonyShip;
+  unsigned long Recycler;
+  unsigned long EspionageProbe;
+  unsigned long Bomber;
+  unsigned long SolarSatellite;
+  unsigned long Destroyer;
+  unsigned long Deathstar;
+  unsigned long Battlecruiser;
 
   // Defences
-  int RocketLauncher;
-  int LightLaser;
-  int HeavyLaser;
-  int GaussCannon;
-  int IonCannon;
-  int PlasmaTurret;
-  int SmallShieldDome;
-  int LargeShieldDome;
+  unsigned long RocketLauncher;
+  unsigned long LightLaser;
+  unsigned long HeavyLaser;
+  unsigned long GaussCannon;
+  unsigned long IonCannon;
+  unsigned long PlasmaTurret;
+  unsigned long SmallShieldDome;
+  unsigned long LargeShieldDome;
 
-  int TotalUnits;
+  unsigned long TotalUnits;
   CombatUnit *Units;
   Price Losses;
 } Entity;
 
 typedef struct {
-  int Winner;
-  int Rounds;
-  int MaxRounds;
+  unsigned short Winner;
+  unsigned short Rounds;
+  unsigned short MaxRounds;
   float FleetToDebris;
   Entity *Attacker;
   Entity *Defender;
   Price Debris;
 } Simulator;
 
-Price NewPrice(unsigned long long metal, unsigned long long crystal, unsigned long long deuterium) {
+Price NewPrice(const unsigned long long metal, const unsigned long long crystal, const unsigned long long deuterium) {
   Price price;
   price.Metal = metal;
   price.Crystal = crystal;
