@@ -338,8 +338,8 @@ bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   return exploded;
 }
 
-int GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targetUnit) {
-  int rf = 0;
+unsigned long GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targetUnit) {
+  unsigned long rf = 0;
   switch(unit->OgameID) {
     case SMALL_CARGO:
       switch (targetUnit->OgameID) {
@@ -449,7 +449,7 @@ int GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targetUnit) {
 
 bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
   bool rapidFire = true;
-  int rf = GetRapidFireAgainst(unit, targetUnit);
+  unsigned long rf = GetRapidFireAgainst(unit, targetUnit);
   if (rf > 0) {
     float chance = (float)(rf-1) / (float)rf;
     float dice = RollDice();
