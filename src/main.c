@@ -318,7 +318,7 @@ bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   unsigned long unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
   float hullPercentage = (float)unit->HullPlating / (float)unitInitialHullPlating;
   if (hullPercentage <= 0.7) {
-    float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)unitInitialHullPlating;
+    float probabilityOfExploding = 1.0 - hullPercentage;
     float dice = RollDice();
     if (SHOULD_LOG) {
       printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding);
