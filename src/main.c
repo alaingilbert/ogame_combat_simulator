@@ -44,10 +44,10 @@ typedef struct {
 typedef struct {
   unsigned short OgameID;
   long WeaponPower;
-  int Shield;
-  unsigned int InitialShield;
-  int HullPlating;
-  int InitialHullPlating;
+  long Shield;
+  long InitialShield;
+  long HullPlating;
+  long InitialHullPlating;
 } CombatUnit;
 
 typedef struct {
@@ -136,7 +136,7 @@ Price GetUnitPrice(unsigned short ogameId) {
   return NewPrice(0, 0, 0);
 }
 
-unsigned int GetUnitBaseShield(unsigned short ogameId) {
+long GetUnitBaseShield(unsigned short ogameId) {
   switch(ogameId) {
     case SMALL_CARGO:       return 10;
     case LARGE_CARGO:       return 25;
@@ -197,10 +197,9 @@ CombatUnit NewUnit(const Entity *entity, int OgameID) {
   unit.OgameID = OgameID;
   unit.WeaponPower = GetUnitBaseWeapon(OgameID) * (1 + 0.1 * entity->Weapon);
   Price unitPrice = GetUnitPrice(OgameID);
-  unsigned int unitBaseShield = GetUnitBaseShield(OgameID);
   unit.InitialHullPlating = (1 + (entity->Armour / 10)) * ((unitPrice.Metal + unitPrice.Crystal) / 10);
   unit.HullPlating = unit.InitialHullPlating;
-  unit.InitialShield = unitBaseShield * (1 + 0.1 * entity->Shield);
+  unit.InitialShield = GetUnitBaseShield(OgameID) * (long)(1.0f + 0.1f * (float)entity->Shield);
   unit.Shield = unit.InitialShield;
   return unit;
 }
@@ -298,7 +297,7 @@ char *UnitToString(const CombatUnit *unit) {
   if (unit->OgameID == CRUISER)
     strcpy(msg, "Cruiser with ");
   char buffer[20];
-  sprintf(buffer, "%d:%d:%ld", unit->HullPlating, unit->Shield, unit->WeaponPower);
+  sprintf(buffer, "%ld:%ld:%ld", unit->HullPlating, unit->Shield, unit->WeaponPower);
   strcat(msg, buffer);
   return msg;
 }
