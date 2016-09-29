@@ -44,9 +44,8 @@ typedef struct {
 typedef struct {
   unsigned short OgameID;
   int WeaponPower;
-  int ShieldPower;
   int Shield;
-  int InitialShield;
+  unsigned int InitialShield;
   int HullPlating;
   int InitialHullPlating;
 } CombatUnit;
@@ -137,103 +136,110 @@ Price GetUnitPrice(unsigned short ogameId) {
   return NewPrice(0, 0, 0);
 }
 
+unsigned int GetUnitBaseShield(unsigned short ogameId) {
+  switch(ogameId) {
+    case SMALL_CARGO:       return 10;
+    case LARGE_CARGO:       return 25;
+    case LIGHT_FIGHTER:     return 10;
+    case HEAVY_FIGHTER:     return 25;
+    case CRUISER:           return 50;
+    case BATTLESHIP:        return 200;
+    case COLONY_SHIP:       return 100;
+    case RECYCLER:          return 10;
+    case ESPIONAGE_PROBE:   return 1; // 0.01
+    case BOMBER:            return 500;
+    case SOLAR_SATELLITE:   return 1;
+    case DESTROYER:         return 500;
+    case DEATHSTAR:         return 50000;
+    case BATTLECRUISER:     return 400;
+    case ROCKET_LAUNCHER:   return 20;
+    case LIGHT_LASER:       return 25;
+    case HEAVY_LASER:       return 100;
+    case GAUSS_CANNON:      return 200;
+    case ION_CANNON:        return 500;
+    case PLASMA_TURRET:     return 300;
+    case SMALL_SHIELD_DOME: return 2000;
+    case LARGE_SHIELD_DOME: return 10000;
+  }
+  return 0;
+}
+
 CombatUnit NewUnit(const Entity *entity, int OgameID) {
   CombatUnit unit;
   unit.OgameID = OgameID;
   switch(OgameID) {
     case SMALL_CARGO:
-      unit.ShieldPower = 10;
       unit.WeaponPower = 5;
       break;
     case LARGE_CARGO:
-      unit.ShieldPower = 25;
       unit.WeaponPower = 5;
       break;
     case LIGHT_FIGHTER:
-      unit.ShieldPower = 10;
       unit.WeaponPower = 50;
       break;
     case HEAVY_FIGHTER:
-      unit.ShieldPower = 25;
       unit.WeaponPower = 150;
       break;
     case CRUISER:
-      unit.ShieldPower = 50;
       unit.WeaponPower = 400;
       break;
     case BATTLESHIP:
-      unit.ShieldPower = 200;
       unit.WeaponPower = 1000;
       break;
     case COLONY_SHIP:
-      unit.ShieldPower = 100;
       unit.WeaponPower = 50;
       break;
     case RECYCLER:
-      unit.ShieldPower = 10;
       unit.WeaponPower = 1;
       break;
     case ESPIONAGE_PROBE:
-      unit.ShieldPower = 1; // 0.01
       unit.WeaponPower = 1; // 0.01
       break;
     case BOMBER:
-      unit.ShieldPower = 500;
       unit.WeaponPower = 1000;
       break;
     case SOLAR_SATELLITE:
-      unit.ShieldPower = 1;
       unit.WeaponPower = 1;
       break;
     case DESTROYER:
-      unit.ShieldPower = 500;
       unit.WeaponPower = 2000;
       break;
     case DEATHSTAR:
-      unit.ShieldPower = 50000;
       unit.WeaponPower = 200000;
       break;
     case BATTLECRUISER:
-      unit.ShieldPower = 400;
       unit.WeaponPower = 700;
       break;
     case ROCKET_LAUNCHER:
-      unit.ShieldPower = 20;
       unit.WeaponPower = 80;
       break;
     case LIGHT_LASER:
-      unit.ShieldPower = 25;
       unit.WeaponPower = 100;
       break;
     case HEAVY_LASER:
-      unit.ShieldPower = 100;
       unit.WeaponPower = 250;
       break;
     case GAUSS_CANNON:
-      unit.ShieldPower = 200;
       unit.WeaponPower = 1100;
       break;
     case ION_CANNON:
-      unit.ShieldPower = 500;
       unit.WeaponPower = 150;
       break;
     case PLASMA_TURRET:
-      unit.ShieldPower = 300;
       unit.WeaponPower = 3000;
       break;
     case SMALL_SHIELD_DOME:
-      unit.ShieldPower = 2000;
       unit.WeaponPower = 1;
       break;
     case LARGE_SHIELD_DOME:
-      unit.ShieldPower = 10000;
       unit.WeaponPower = 1;
       break;
   }
   Price unitPrice = GetUnitPrice(OgameID);
+  unsigned int unitBaseShield = GetUnitBaseShield(OgameID);
   unit.InitialHullPlating = (1 + (entity->Armour / 10)) * ((unitPrice.Metal + unitPrice.Crystal) / 10);
   unit.HullPlating = unit.InitialHullPlating;
-  unit.InitialShield = unit.ShieldPower * (1 + 0.1 * entity->Shield);
+  unit.InitialShield = unitBaseShield * (1 + 0.1 * entity->Shield);
   unit.Shield = unit.InitialShield;
   return unit;
 }
