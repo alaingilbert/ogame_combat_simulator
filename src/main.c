@@ -43,8 +43,8 @@ typedef struct {
 
 typedef struct {
   unsigned short OgameID;
-  long Shield;
-  long HullPlating;
+  unsigned long Shield;
+  unsigned long HullPlating;
 } CombatUnit;
 
 typedef struct {
@@ -161,7 +161,7 @@ long GetUnitBaseShield(unsigned short ogameId) {
   return 0;
 }
 
-long GetUnitBaseWeapon(unsigned short ogameId) {
+unsigned long GetUnitBaseWeapon(unsigned short ogameId) {
   switch(ogameId) {
     case SMALL_CARGO:       return 5;
     case LARGE_CARGO:       return 5;
@@ -189,15 +189,15 @@ long GetUnitBaseWeapon(unsigned short ogameId) {
   return 0;
 }
 
-long GetUnitWeaponPower(const unsigned short ogameId, const short weaponTechno) {
+unsigned long GetUnitWeaponPower(const unsigned short ogameId, const short weaponTechno) {
   return GetUnitBaseWeapon(ogameId) * (1 + 0.1 * weaponTechno);
 }
 
-long GetUnitInitialShield(const unsigned short ogameId, const short shieldTechno) {
+unsigned long GetUnitInitialShield(const unsigned short ogameId, const short shieldTechno) {
   return GetUnitBaseShield(ogameId) * (1 + 0.1 * shieldTechno);
 }
 
-long GetUnitInitialHullPlating(const short armourTechno, const long metalPrice, const long crystalPrice) {
+unsigned long GetUnitInitialHullPlating(const short armourTechno, const long metalPrice, const long crystalPrice) {
   return (1 + (armourTechno / 10)) * ((metalPrice + crystalPrice) / 10);
 }
 
@@ -315,7 +315,7 @@ float RollDice(void) {
 bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   bool exploded = false;
   Price unitPrice = GetUnitPrice(unit->OgameID);
-  long unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
+  unsigned long unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
   float hullPercentage = (float)unit->HullPlating / (float)unitInitialHullPlating;
   if (hullPercentage <= 0.7) {
     float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)unitInitialHullPlating;
@@ -482,8 +482,8 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
     free(attackingString);
     free(targetString);
   }
-  long weapon = GetUnitWeaponPower(unit->OgameID, attacker->Weapon);
-  long targetInitialShield = GetUnitInitialShield(unit->OgameID, defender->Shield);
+  unsigned long weapon = GetUnitWeaponPower(unit->OgameID, attacker->Weapon);
+  unsigned long targetInitialShield = GetUnitInitialShield(unit->OgameID, defender->Shield);
   // Check for shot bounce
   if (weapon < 0.01 * targetInitialShield) {
     if (SHOULD_LOG) {
