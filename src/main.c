@@ -189,8 +189,8 @@ long GetUnitBaseWeapon(unsigned short ogameId) {
   return 0;
 }
 
-long GetUnitWeaponPower(const CombatUnit *unit, const Entity *entity) {
-  return GetUnitBaseWeapon(unit->OgameID) * (1 + 0.1 * entity->Weapon);
+long GetUnitWeaponPower(const unsigned short ogameId, const short weaponTechno) {
+  return GetUnitBaseWeapon(ogameId) * (1 + 0.1 * weaponTechno);
 }
 
 long GetUnitInitialShield(const unsigned short ogameId, const short shieldTechno) {
@@ -482,7 +482,7 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
     free(attackingString);
     free(targetString);
   }
-  long weapon = GetUnitWeaponPower(unit, attacker);
+  long weapon = GetUnitWeaponPower(unit->OgameID, attacker->Weapon);
   long targetInitialShield = GetUnitInitialShield(unit->OgameID, defender->Shield);
   // Check for shot bounce
   if (weapon < 0.01 * targetInitialShield) {
