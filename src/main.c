@@ -496,7 +496,11 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
   if (targetUnit->Shield < weapon) {
     weapon -= targetUnit->Shield;
     targetUnit->Shield = 0;
-    targetUnit->HullPlating -= weapon;
+    if (targetUnit->HullPlating < weapon) {
+      targetUnit->HullPlating = 0;
+    } else {
+      targetUnit->HullPlating -= weapon;
+    }
   } else {
     targetUnit->Shield -= weapon;
   }
