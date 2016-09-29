@@ -295,7 +295,7 @@ bool IsAlive(const CombatUnit *unit) {
   return unit->HullPlating > 0;
 }
 
-char *UnitToString(const CombatUnit *unit, const Entity *entity) {
+char * UnitToString(const CombatUnit *unit, const Entity *entity) {
   char *msg = malloc(sizeof(char) * 100);
   if (unit->OgameID == ROCKET_LAUNCHER)
     strcpy(msg, "RocketLauncher with ");
