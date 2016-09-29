@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <unistd.h>
+#include <locale.h>
 #include "../lib/ini/ini.h"
 #include "../lib/parson/parson.h"
 
@@ -921,19 +922,19 @@ void PrettyPrintResults(const Result *result) {
   printf("Attacker win: %d%%\n", result->AttackerWin);
   printf("Defender win: %d%%\n", result->DefenderWin);
   printf("Draw: %d%%\n", result->Draw);
-  printf("Attacker losses: %llu, %llu, %llu\n",
+  printf("Attacker losses: %'llu, %'llu, %'llu\n",
       result->AttackerLosses.Metal,
       result->AttackerLosses.Crystal,
       result->AttackerLosses.Deuterium);
-  printf("Defender losses: %llu, %llu, %llu\n",
+  printf("Defender losses: %'llu, %'llu, %'llu\n",
       result->DefenderLosses.Metal,
       result->DefenderLosses.Crystal,
       result->DefenderLosses.Deuterium);
-  printf("Debris: %llu, %llu, %llu\n",
+  printf("Debris: %'llu, %'llu, %'llu\n",
       result->Debris.Metal,
       result->Debris.Crystal,
       result->Debris.Deuterium);
-  printf("Recycler: %d\n", result->Recycler);
+  printf("Recycler: %'d\n", result->Recycler);
   printf("Moonchance: %d%%\n", result->Moonchance);
 }
 
@@ -979,6 +980,7 @@ void simulator_free(Simulator *simulator) {
 }
 
 int main(int argc, char *argv[]) {
+  setlocale(LC_NUMERIC, "");
 
   bool jsonOutput = false;
   char *configPath = "config.ini";
