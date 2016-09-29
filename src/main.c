@@ -43,11 +43,8 @@ typedef struct {
 
 typedef struct {
   unsigned short OgameID;
-  long WeaponPower;
   long Shield;
-  long InitialShield;
   long HullPlating;
-  long InitialHullPlating;
 } CombatUnit;
 
 typedef struct {
@@ -192,15 +189,24 @@ long GetUnitBaseWeapon(unsigned short ogameId) {
   return 0;
 }
 
+long GetUnitWeaponPower(const CombatUnit *unit, const Entity *entity) {
+  return GetUnitBaseWeapon(unit->OgameID) * (1 + 0.1 * entity->Weapon);
+}
+
+long GetUnitInitialShield(const unsigned short ogameId, const short shieldTechno) {
+  return GetUnitBaseShield(ogameId) * (1 + 0.1 * shieldTechno);
+}
+
+long GetUnitInitialHullPlating(const short armourTechno, const long metalPrice, const long crystalPrice) {
+  return (1 + (armourTechno / 10)) * ((metalPrice + crystalPrice) / 10);
+}
+
 CombatUnit NewUnit(const Entity *entity, int OgameID) {
   CombatUnit unit;
   unit.OgameID = OgameID;
-  unit.WeaponPower = GetUnitBaseWeapon(OgameID) * (1 + 0.1 * entity->Weapon);
   Price unitPrice = GetUnitPrice(OgameID);
-  unit.InitialHullPlating = (1 + (entity->Armour / 10)) * ((unitPrice.Metal + unitPrice.Crystal) / 10);
-  unit.HullPlating = unit.InitialHullPlating;
-  unit.InitialShield = GetUnitBaseShield(OgameID) * (long)(1.0f + 0.1f * (float)entity->Shield);
-  unit.Shield = unit.InitialShield;
+  unit.HullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
+  unit.Shield = GetUnitInitialShield(OgameID, entity->Shield);
   return unit;
 }
 
@@ -297,7 +303,7 @@ char *UnitToString(const CombatUnit *unit) {
   if (unit->OgameID == CRUISER)
     strcpy(msg, "Cruiser with ");
   char buffer[20];
-  sprintf(buffer, "%ld:%ld:%ld", unit->HullPlating, unit->Shield, unit->WeaponPower);
+  //sprintf(buffer, "%ld:%ld:%ld", unit->HullPlating, unit->Shield, unit->WeaponPower);
   strcat(msg, buffer);
   return msg;
 }
@@ -306,11 +312,13 @@ float RollDice(void) {
   return (float)rand()/(float)(RAND_MAX/1);
 }
 
-bool HasExploded(const CombatUnit *unit) {
+bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   bool exploded = false;
-  float hullPercentage = (float)unit->HullPlating / (float)unit->InitialHullPlating;
+  Price unitPrice = GetUnitPrice(unit->OgameID);
+  long unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
+  float hullPercentage = (float)unit->HullPlating / (float)unitInitialHullPlating;
   if (hullPercentage <= 0.7) {
-    float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)unit->InitialHullPlating;
+    float probabilityOfExploding = 1.0 - (float)unit->HullPlating / (float)unitInitialHullPlating;
     float dice = RollDice();
     if (SHOULD_LOG) {
       printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding);
@@ -466,7 +474,7 @@ bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
   return rapidFire;
 }
 
-void Attack(const CombatUnit *unit, CombatUnit *targetUnit) {
+void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defender, CombatUnit *targetUnit) {
   if (SHOULD_LOG) {
     char *attackingString = UnitToString(unit);
     char *targetString = UnitToString(targetUnit);
@@ -474,9 +482,10 @@ void Attack(const CombatUnit *unit, CombatUnit *targetUnit) {
     free(attackingString);
     free(targetString);
   }
-  long weapon = unit->WeaponPower;
+  long weapon = GetUnitWeaponPower(unit, attacker);
+  long targetInitialShield = GetUnitInitialShield(unit->OgameID, defender->Shield);
   // Check for shot bounce
-  if (weapon < 0.01*targetUnit->InitialShield) {
+  if (weapon < 0.01 * targetInitialShield) {
     if (SHOULD_LOG) {
       printf("shot bounced\n");
     }
@@ -499,7 +508,7 @@ void Attack(const CombatUnit *unit, CombatUnit *targetUnit) {
 
   // Check for explosion
   if (IsAlive(targetUnit)) {
-    if (HasExploded(targetUnit)) {
+    if (HasExploded(defender, targetUnit)) {
       targetUnit->HullPlating = 0;
     }
   }
@@ -516,7 +525,7 @@ void unitsFires(Entity *attacker, Entity *defender) {
       int random = rand() % defender->TotalUnits;
       CombatUnit *targetUnit = &defendingUnits[random];
       if (IsAlive(targetUnit)) {
-        Attack(unit, targetUnit);
+        Attack(attacker, unit, defender, targetUnit);
       }
       rapidFire = GetAnotherShot(unit, targetUnit);
     }
@@ -588,7 +597,7 @@ void RestoreShields(Entity *entity) {
       printf("%s still has integrity, restore its shield\n", unitString);
       free(unitString);
     }
-    unit->Shield = unit->InitialShield;
+    unit->Shield = GetUnitInitialShield(unit->OgameID, entity->Shield);
   }
 }
 
