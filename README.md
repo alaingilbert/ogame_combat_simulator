@@ -2,19 +2,19 @@
 
 ### Build
 
-```
+```sh
 make
 ```
 
 ### Execute
 
-```
+```sh
 ./main -c config.ini
 ```
 
 ##### Json output
 
-```
+```sh
 ./main -c config.ini -j
 ```
 
