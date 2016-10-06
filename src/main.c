@@ -394,7 +394,8 @@ bool HasExploded(const Entity *entity, const CombatUnit *unit) {
     float probabilityOfExploding = 1.0 - hullPercentage;
     float dice = RollDice();
     if (SHOULD_LOG) {
-      printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ", probabilityOfExploding*100, dice, 1-probabilityOfExploding);
+      printf("probability of exploding of %1.3f%%: dice value of %1.3f comparing with %1.3f: ",
+          probabilityOfExploding*100, dice, 1-probabilityOfExploding);
     }
     if (dice >= 1-probabilityOfExploding) {
       exploded = true;
@@ -540,7 +541,8 @@ bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
     }
   } else {
     if (SHOULD_LOG) {
-      printf("%s doesn't have rapid fire against %s.\n", GetUnitName(GetUnitId(unit)), GetUnitName(GetUnitId(targetUnit)));
+      printf("%s doesn't have rapid fire against %s.\n",
+          GetUnitName(GetUnitId(unit)), GetUnitName(GetUnitId(targetUnit)));
     }
     rapidFire = false;
   }
