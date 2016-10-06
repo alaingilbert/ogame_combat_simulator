@@ -12,6 +12,20 @@ make
 ./main -c config.ini
 ```
 
+```
+Simulations 20/20
+
+Results (20 simulations | ~2 rounds)
+Attacker win: 90%
+Defender win: 5%
+Draw: 5%
+Attacker losses: 2,000, 700, 200
+Defender losses: 9,900, 2,000, 0
+Debris: 600, 210, 0
+Recycler: 1
+Moonchance: 0%
+```
+
 ##### Json output
 
 ```sh
