@@ -1,0 +1,51 @@
+[simulator]
+logging         = 0
+Simulations     = 20
+
+[attacker]
+Weapon          = 0
+Shield          = 0
+Armour          = 0
+Combustion      = 0
+Impulse         = 0
+Hyperspace      = 0
+SmallCargo      = 0
+LargeCargo      = 0
+LightFighter    = 0
+HeavyFighter    = 0
+Cruiser         = 1
+Battleship      = 0
+ColonyShip      = 0
+Recycler        = 0
+EspionageProbe  = 0
+Bomber          = 0
+Destroyer       = 0
+Deathstar       = 0
+Battlecruiser   = 0
+
+[defender]
+Weapon          = 0
+Shield          = 0
+Armour          = 0
+SmallCargo      = 0
+LargeCargo      = 0
+LightFighter    = 0
+HeavyFighter    = 0
+Cruiser         = 0
+Battleship      = 0
+ColonyShip      = 0
+Recycler        = 0
+EspionageProbe  = 0
+Bomber          = 0
+SolarSatellite  = 0
+Destroyer       = 0
+Deathstar       = 0
+Battlecruiser   = 0
+RocketLauncher  = 2
+LightLaser      = 0
+HeavyLaser      = 1
+GaussCannon     = 0
+IonCannon       = 0
+PlasmaTurret    = 0
+SmallShieldDome = 0
+LargeShieldDome = 0
