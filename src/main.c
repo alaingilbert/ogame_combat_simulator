@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
@@ -37,9 +38,9 @@ typedef enum {
 } ships;
 
 typedef struct {
-  unsigned long long Metal;
-  unsigned long long Crystal;
-  unsigned long long Deuterium;
+  uint64_t Metal;
+  uint64_t Crystal;
+  uint64_t Deuterium;
 } Price;
 
 // Id     ( 5b ->        31)
@@ -55,94 +56,94 @@ typedef struct {
 // 00000000000000000000000000000000 00000000011111111111111111100000 // Shield          8.388.576
 // 00000000000000000001111111111111 11111111100000000000000000000000 // Hull   35.184.363.700.224
 
-const unsigned short MAX_ARMOUR_LEVEL = 36;
-const unsigned short MAX_SHIELD_LEVEL = 42;
-const unsigned short ID_MASK = 31;
-const unsigned long SHIELD_MASK = 8388576;
-const unsigned long long HULL_MASK = 35184363700224;
+const uint8_t MAX_ARMOUR_LEVEL = 36;
+const uint8_t MAX_SHIELD_LEVEL = 42;
+const uint8_t ID_MASK = 31;
+const uint32_t SHIELD_MASK = 8388576;
+const uint64_t HULL_MASK = 35184363700224;
 
 typedef struct {
-  unsigned long long PackedInfos;
+  uint64_t PackedInfos;
 } CombatUnit;
 
-unsigned short GetUnitId(const CombatUnit *unit) {
+uint8_t GetUnitId(const CombatUnit *unit) {
   return (unit->PackedInfos & ID_MASK) >> 0;
 }
 
-unsigned long GetUnitShield(const CombatUnit *unit) {
+uint32_t GetUnitShield(const CombatUnit *unit) {
   return (unit->PackedInfos & SHIELD_MASK) >> 5;
 }
 
-unsigned long GetUnitHull(const CombatUnit *unit) {
+uint64_t GetUnitHull(const CombatUnit *unit) {
   return (unit->PackedInfos & HULL_MASK) >> 23;
 }
 
-void SetUnitId(CombatUnit *unit, unsigned short id) {
-  unit->PackedInfos &= ~ID_MASK;
+void SetUnitId(CombatUnit *unit, uint8_t id) {
+  unit->PackedInfos &= ~(uint64_t)ID_MASK;
   unit->PackedInfos |= id << 0;
 }
 
-void SetUnitShield(CombatUnit *unit, unsigned long shield) {
-  unit->PackedInfos &= ~SHIELD_MASK;
+void SetUnitShield(CombatUnit *unit, uint32_t shield) {
+  unit->PackedInfos &= ~(uint64_t)SHIELD_MASK;
   unit->PackedInfos |= shield << 5;
 }
 
-void SetUnitHull(CombatUnit *unit, unsigned long hull) {
+void SetUnitHull(CombatUnit *unit, uint64_t hull) {
   unit->PackedInfos &= ~HULL_MASK;
   unit->PackedInfos |= hull << 23;
 }
 
 typedef struct {
   // Technos
-  unsigned short Weapon;
-  unsigned short Shield;
-  unsigned short Armour;
-  unsigned short Combustion;
-  unsigned short Impulse;
-  unsigned short Hyperspace;
+  uint8_t Weapon;
+  uint8_t Shield;
+  uint8_t Armour;
+  uint8_t Combustion;
+  uint8_t Impulse;
+  uint8_t Hyperspace;
 
   // Ships
-  unsigned long SmallCargo;
-  unsigned long LargeCargo;
-  unsigned long LightFighter;
-  unsigned long HeavyFighter;
-  unsigned long Cruiser;
-  unsigned long Battleship;
-  unsigned long ColonyShip;
-  unsigned long Recycler;
-  unsigned long EspionageProbe;
-  unsigned long Bomber;
-  unsigned long SolarSatellite;
-  unsigned long Destroyer;
-  unsigned long Deathstar;
-  unsigned long Battlecruiser;
+  uint32_t SmallCargo;
+  uint32_t LargeCargo;
+  uint32_t LightFighter;
+  uint32_t HeavyFighter;
+  uint32_t Cruiser;
+  uint32_t Battleship;
+  uint32_t ColonyShip;
+  uint32_t Recycler;
+  uint32_t EspionageProbe;
+  uint32_t Bomber;
+  uint32_t SolarSatellite;
+  uint32_t Destroyer;
+  uint32_t Deathstar;
+  uint32_t Battlecruiser;
 
   // Defences
-  unsigned long RocketLauncher;
-  unsigned long LightLaser;
-  unsigned long HeavyLaser;
-  unsigned long GaussCannon;
-  unsigned long IonCannon;
-  unsigned long PlasmaTurret;
-  unsigned long SmallShieldDome;
-  unsigned long LargeShieldDome;
+  uint32_t RocketLauncher;
+  uint32_t LightLaser;
+  uint32_t HeavyLaser;
+  uint32_t GaussCannon;
+  uint32_t IonCannon;
+  uint32_t PlasmaTurret;
+  uint32_t SmallShieldDome;
+  uint32_t LargeShieldDome;
 
-  unsigned long TotalUnits;
+  uint32_t TotalUnits;
   CombatUnit *Units;
   Price Losses;
 } Entity;
 
 typedef struct {
-  unsigned short Winner;
-  unsigned short Rounds;
-  unsigned short MaxRounds;
+  uint32_t Winner;
+  uint32_t Rounds;
+  uint32_t MaxRounds;
   float FleetToDebris;
   Entity *Attacker;
   Entity *Defender;
   Price Debris;
 } Simulator;
 
-Price NewPrice(const unsigned long long metal, const unsigned long long crystal, const unsigned long long deuterium) {
+Price NewPrice(const uint64_t metal, const uint64_t crystal, const uint64_t deuterium) {
   Price price;
   price.Metal = metal;
   price.Crystal = crystal;
@@ -150,7 +151,7 @@ Price NewPrice(const unsigned long long metal, const unsigned long long crystal,
   return price;
 }
 
-Price GetUnitPrice(unsigned short unitId) {
+Price GetUnitPrice(uint8_t unitId) {
   switch(unitId) {
     case SMALL_CARGO:       return NewPrice(   2000,    2000,       0);
     case LARGE_CARGO:       return NewPrice(   6000,    6000,       0);
@@ -178,7 +179,7 @@ Price GetUnitPrice(unsigned short unitId) {
   return NewPrice(0, 0, 0);
 }
 
-long GetUnitBaseShield(unsigned short unitId) {
+uint32_t GetUnitBaseShield(uint8_t unitId) {
   switch(unitId) {
     case SMALL_CARGO:       return    10;
     case LARGE_CARGO:       return    25;
@@ -206,7 +207,7 @@ long GetUnitBaseShield(unsigned short unitId) {
   return 0;
 }
 
-unsigned long GetUnitBaseWeapon(unsigned short unitId) {
+uint32_t GetUnitBaseWeapon(uint8_t unitId) {
   switch(unitId) {
     case SMALL_CARGO:       return      5;
     case LARGE_CARGO:       return      5;
@@ -234,7 +235,7 @@ unsigned long GetUnitBaseWeapon(unsigned short unitId) {
   return 0;
 }
 
-char * GetUnitName(unsigned short unitId) {
+char * GetUnitName(uint8_t unitId) {
   switch(unitId) {
     case SMALL_CARGO:       return "Small cargo";
     case LARGE_CARGO:       return "Large cargo";
@@ -263,19 +264,19 @@ char * GetUnitName(unsigned short unitId) {
 }
 
 
-unsigned long GetUnitWeaponPower(const unsigned short unitId, const short weaponTechno) {
+uint32_t GetUnitWeaponPower(const uint8_t unitId, const uint8_t weaponTechno) {
   return GetUnitBaseWeapon(unitId) * (1 + 0.1 * weaponTechno);
 }
 
-unsigned long GetUnitInitialShield(const unsigned short unitId, const short shieldTechno) {
+uint32_t GetUnitInitialShield(const uint8_t unitId, const uint8_t shieldTechno) {
   return GetUnitBaseShield(unitId) * (1 + 0.1 * shieldTechno);
 }
 
-unsigned long GetUnitInitialHullPlating(const short armourTechno, const long metalPrice, const long crystalPrice) {
+uint32_t GetUnitInitialHullPlating(const uint8_t armourTechno, const uint32_t metalPrice, const uint32_t crystalPrice) {
   return (1 + (armourTechno / 10)) * ((metalPrice + crystalPrice) / 10);
 }
 
-CombatUnit NewUnit(const Entity *entity, unsigned short unitId) {
+CombatUnit NewUnit(const Entity *entity, uint8_t unitId) {
   CombatUnit unit;
   SetUnitId(&unit, unitId);
   Price unitPrice = GetUnitPrice(unitId);
@@ -315,8 +316,8 @@ void ResetEntity(Entity *entity) {
 void InitEntity(Entity *entity) {
   ResetEntity(entity);
 
-  unsigned long i;
-  unsigned long idx = 0;
+  uint32_t i;
+  uint32_t idx = 0;
 
   for (i=0; i<entity->SmallCargo; i++)
     entity->Units[idx++] = NewUnit(entity, SMALL_CARGO);
@@ -374,8 +375,8 @@ char * UnitToString(const CombatUnit *unit, const Entity *entity) {
   strcpy(msg, unitName);
   strcat(msg, " with ");
   char buffer[20];
-  unsigned long weapon = GetUnitWeaponPower(GetUnitId(unit), entity->Weapon);
-  sprintf(buffer, "%ld:%ld:%ld", GetUnitHull(unit), GetUnitShield(unit), weapon);
+  uint32_t weapon = GetUnitWeaponPower(GetUnitId(unit), entity->Weapon);
+  sprintf(buffer, "%llu:%u:%u", GetUnitHull(unit), GetUnitShield(unit), weapon);
   strcat(msg, buffer);
   return msg;
 }
@@ -387,7 +388,7 @@ float RollDice(void) {
 bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   bool exploded = false;
   Price unitPrice = GetUnitPrice(GetUnitId(unit));
-  unsigned long unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
+  uint32_t unitInitialHullPlating = GetUnitInitialHullPlating(entity->Armour, unitPrice.Metal, unitPrice.Crystal);
   float hullPercentage = (float)GetUnitHull(unit) / (float)unitInitialHullPlating;
   if (hullPercentage < 0.7) {
     float probabilityOfExploding = 1.0 - hullPercentage;
@@ -409,8 +410,8 @@ bool HasExploded(const Entity *entity, const CombatUnit *unit) {
   return exploded;
 }
 
-unsigned long GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targetUnit) {
-  unsigned long rf = 0;
+uint32_t GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targetUnit) {
+  uint32_t rf = 0;
   switch(GetUnitId(unit)) {
     case SMALL_CARGO:
       switch (GetUnitId(targetUnit)) {
@@ -520,7 +521,7 @@ unsigned long GetRapidFireAgainst(const CombatUnit *unit, const CombatUnit *targ
 
 bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
   bool rapidFire = true;
-  unsigned long rf = GetRapidFireAgainst(unit, targetUnit);
+  uint32_t rf = GetRapidFireAgainst(unit, targetUnit);
   if (rf > 0) {
     float chance = (float)(rf-1) / (float)rf;
     float dice = RollDice();
@@ -529,11 +530,11 @@ bool GetAnotherShot(const CombatUnit *unit, const CombatUnit *targetUnit) {
     }
     if (dice <= chance) {
       if (SHOULD_LOG) {
-        printf("%d gets another shot.\n", GetUnitId(unit));
+        printf("%s gets another shot.\n", GetUnitName(GetUnitId(unit)));
       }
     } else {
       if (SHOULD_LOG) {
-        printf("%d does not get another shot.\n", GetUnitId(unit));
+        printf("%s does not get another shot.\n", GetUnitName(GetUnitId(unit)));
       }
       rapidFire = false;
     }
@@ -554,7 +555,7 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
     free(attackingString);
     free(targetString);
   }
-  unsigned long weapon = GetUnitWeaponPower(GetUnitId(unit), attacker->Weapon);
+  uint32_t weapon = GetUnitWeaponPower(GetUnitId(unit), attacker->Weapon);
   // Check for shot bounce
   if (weapon * 100 < GetUnitShield(unit)) {
     if (SHOULD_LOG) {
@@ -564,8 +565,8 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
   }
 
   // Attack target
-  unsigned long currentHull = GetUnitHull(targetUnit);
-  unsigned long currentShield = GetUnitShield(targetUnit);
+  uint32_t currentHull = GetUnitHull(targetUnit);
+  uint32_t currentShield = GetUnitShield(targetUnit);
   if (currentShield < weapon) {
     weapon -= currentShield;
     SetUnitShield(targetUnit, 0);
@@ -592,14 +593,14 @@ void Attack(const Entity *attacker, const CombatUnit *unit, const Entity *defend
 }
 
 void unitsFires(Entity *attacker, Entity *defender) {
-  unsigned long i;
+  uint32_t i;
   CombatUnit *attackingUnits = attacker->Units;
   CombatUnit *defendingUnits = defender->Units;
   for (i=0; i<attacker->TotalUnits; i++) {
     CombatUnit *unit = &attackingUnits[i];
     bool rapidFire = true;
     while (rapidFire) {
-      unsigned long random = rand() % defender->TotalUnits;
+      uint32_t random = rand() % defender->TotalUnits;
       CombatUnit *targetUnit = &defendingUnits[random];
       if (IsAlive(targetUnit)) {
         Attack(attacker, unit, defender, targetUnit);
@@ -642,8 +643,8 @@ bool IsShip(const CombatUnit *unit) {
 }
 
 void RemoveEntityDestroyedUnits(Simulator *simulator, Entity *entity) {
-  long i;
-  unsigned long l = entity->TotalUnits;
+  int32_t i;
+  uint32_t l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (GetUnitHull(unit) <= 0) {
@@ -665,8 +666,8 @@ void RemoveDestroyedUnits(Simulator *simulator) {
 }
 
 void RestoreShields(Entity *entity) {
-  long i;
-  unsigned long l = entity->TotalUnits;
+  int32_t i;
+  uint32_t l = entity->TotalUnits;
   for (i = l-1; i >= 0; i--) {
     CombatUnit *unit = &entity->Units[i];
     if (SHOULD_LOG) {
