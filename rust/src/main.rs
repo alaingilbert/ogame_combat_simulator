@@ -58,69 +58,69 @@ const ID_MASK:     u64 = 0b00000000_00000000_00000000_00000000__00000000_0000000
 const SHIELD_MASK: u64 = 0b00000000_00000000_00000000_00000000__00000000_01111111_11111111_11100000;
 const HULL_MASK:   u64 = 0b00000000_00000000_00011111_11111111__11111111_10000000_00000000_00000000;
 
-fn get_id(unit: &CombatUnit) -> Unit {
-    id_2_unit(((unit.packed_infos & ID_MASK) >> 0) as u8)
-}
-
-fn get_shield(unit: &CombatUnit) -> u32 {
-    ((unit.packed_infos & SHIELD_MASK) >> 5) as u32
-}
-
-fn get_hull(unit: &CombatUnit) -> u32 {
-    ((unit.packed_infos & HULL_MASK) >> 23) as u32
-}
-
-fn set_id(unit: &mut CombatUnit, u: Unit) {
-    unit.packed_infos &= !ID_MASK;
-    unit.packed_infos |= (u as u64) << 0;
-}
-
-fn set_shield(unit: &mut CombatUnit, shield: u32) {
-    unit.packed_infos &= !SHIELD_MASK;
-    unit.packed_infos |= (shield as u64) << 5;
-}
-
-fn set_hull(unit: &mut CombatUnit, hull: u64) {
-    unit.packed_infos &= !HULL_MASK;
-    unit.packed_infos |= hull << 23;
-}
-
-fn is_alive(unit: &CombatUnit) -> bool {
-    get_hull(unit) > 0
-}
-
-//impl CombatUnit {
-//    fn get_id(&self) -> Unit {
-//        id_2_unit(((self.packed_infos & ID_MASK) >> 0) as u8)
-//    }
-//
-//    fn get_shield(&self) -> u32 {
-//        ((self.packed_infos & SHIELD_MASK) >> 5) as u32
-//    }
-//
-//    fn get_hull(&self) -> u32 {
-//        ((self.packed_infos & HULL_MASK) >> 23) as u32
-//    }
-//
-//    fn set_id(&mut self, unit: Unit) {
-//        self.packed_infos &= !ID_MASK;
-//        self.packed_infos |= (unit as u64) << 0;
-//    }
-//
-//    fn set_shield(&mut self, shield: u32) {
-//        self.packed_infos &= !SHIELD_MASK;
-//        self.packed_infos |= (shield as u64) << 5;
-//    }
-//
-//    fn set_hull(&mut self, hull: u64) {
-//        self.packed_infos &= !HULL_MASK;
-//        self.packed_infos |= hull << 23;
-//    }
-//
-//    fn is_alive(&self) -> bool {
-//        self.get_hull() > 0
-//    }
+//fn get_id(unit: &CombatUnit) -> Unit {
+//    id_2_unit(((unit.packed_infos & ID_MASK) >> 0) as u8)
 //}
+//
+//fn get_shield(unit: &CombatUnit) -> u32 {
+//    ((unit.packed_infos & SHIELD_MASK) >> 5) as u32
+//}
+//
+//fn get_hull(unit: &CombatUnit) -> u32 {
+//    ((unit.packed_infos & HULL_MASK) >> 23) as u32
+//}
+//
+//fn set_id(unit: &mut CombatUnit, u: Unit) {
+//    unit.packed_infos &= !ID_MASK;
+//    unit.packed_infos |= (u as u64) << 0;
+//}
+//
+//fn set_shield(unit: &mut CombatUnit, shield: u32) {
+//    unit.packed_infos &= !SHIELD_MASK;
+//    unit.packed_infos |= (shield as u64) << 5;
+//}
+//
+//fn set_hull(unit: &mut CombatUnit, hull: u64) {
+//    unit.packed_infos &= !HULL_MASK;
+//    unit.packed_infos |= hull << 23;
+//}
+//
+//fn is_alive(unit: &CombatUnit) -> bool {
+//    get_hull(unit) > 0
+//}
+
+impl CombatUnit {
+    fn get_id(&self) -> Unit {
+        id_2_unit(((self.packed_infos & ID_MASK) >> 0) as u8)
+    }
+
+    fn get_shield(&self) -> u32 {
+        ((self.packed_infos & SHIELD_MASK) >> 5) as u32
+    }
+
+    fn get_hull(&self) -> u32 {
+        ((self.packed_infos & HULL_MASK) >> 23) as u32
+    }
+
+    fn set_id(&mut self, unit: Unit) {
+        self.packed_infos &= !ID_MASK;
+        self.packed_infos |= (unit as u64) << 0;
+    }
+
+    fn set_shield(&mut self, shield: u32) {
+        self.packed_infos &= !SHIELD_MASK;
+        self.packed_infos |= (shield as u64) << 5;
+    }
+
+    fn set_hull(&mut self, hull: u64) {
+        self.packed_infos &= !HULL_MASK;
+        self.packed_infos |= hull << 23;
+    }
+
+    fn is_alive(&self) -> bool {
+        self.get_hull() > 0
+    }
+}
 
 struct Entity {
     // Technos
@@ -260,7 +260,7 @@ fn id_2_unit(id: u8) -> Unit {
 }
 
 fn get_rapid_fire_against(unit: &CombatUnit, target: &CombatUnit) -> u32 {
-    match (get_id(unit), get_id(target)) {
+    match (unit.get_id(), target.get_id()) {
         (Unit::SmallCargo,    Unit::EspionageProbe) =>     5,
         (Unit::SmallCargo,    Unit::SolarSatellite) =>     5,
         (Unit::LargeCargo,    Unit::EspionageProbe) =>     5,
@@ -648,9 +648,9 @@ fn reset_entity(entity: &mut Entity) {
 fn new_unit(armour: u8, shield: u8, unit: Unit) -> CombatUnit {
     let unit_price = get_unit_price(unit);
     let mut combat_unit = CombatUnit{packed_infos: 0};
-    set_id(&mut combat_unit, unit);
-    set_hull(&mut combat_unit, get_unit_initial_hull_plating(armour, unit_price.metal, unit_price.crystal));
-    set_shield(&mut combat_unit, get_unit_initial_shield(unit, shield));
+    combat_unit.set_id(unit);
+    combat_unit.set_hull(get_unit_initial_hull_plating(armour, unit_price.metal, unit_price.crystal));
+    combat_unit.set_shield(get_unit_initial_shield(unit, shield));
     combat_unit
 }
 
@@ -735,13 +735,13 @@ fn init_entity(entity: &mut Entity) {
 
 fn attack(attacker: &Entity, unit: &CombatUnit, defender_armour: u8, defender_weapon: u8, target_unit: &mut CombatUnit) {
     if SHOULD_LOG {
-        let attacking_str = get_unit_name(get_id(unit));
-        let target_str = get_unit_name(get_id(target_unit));
+        let attacking_str = get_unit_name(unit.get_id());
+        let target_str = get_unit_name(target_unit.get_id());
         print!("{} fires at {}; ", attacking_str, target_str);
     }
-    let mut weapon = get_unit_weapon_power(get_id(unit), attacker.weapon);
+    let mut weapon = get_unit_weapon_power(unit.get_id(), attacker.weapon);
     // Check for shot bounce
-    if weapon * 100 < get_shield(unit) {
+    if weapon * 100 < unit.get_shield() {
         if SHOULD_LOG {
             println!("shot bounced");
         }
@@ -749,36 +749,36 @@ fn attack(attacker: &Entity, unit: &CombatUnit, defender_armour: u8, defender_we
     }
 
     // Attack target
-    let current_hull = get_hull(target_unit);
-    let current_shield = get_shield(target_unit);
+    let current_hull = target_unit.get_hull();
+    let current_shield = target_unit.get_shield();
     if current_shield < weapon {
         weapon -= current_shield;
-        set_shield(target_unit, 0);
+        target_unit.set_shield(0);
         if current_hull < weapon {
-            set_hull(target_unit, 0);
+            target_unit.set_hull(0);
         } else {
-            set_hull(target_unit, (current_hull - weapon) as u64);
+            target_unit.set_hull((current_hull - weapon) as u64);
         }
     } else {
-        set_shield(target_unit, current_shield - weapon);
+        target_unit.set_shield(current_shield - weapon);
     }
     if SHOULD_LOG {
         let target_str = unit_2_str(target_unit, defender_weapon);
         println!("result is {}", target_str);
     }
     // Check for explosion
-    if is_alive(target_unit) {
+    if target_unit.is_alive() {
         if has_exploded(defender_armour, target_unit) {
-            set_hull(target_unit, 0);
+            target_unit.set_hull(0);
         }
     }
 }
 
 fn has_exploded(armour: u8, unit: &CombatUnit) -> bool {
     let mut exploded = false;
-    let price = get_unit_price(get_id(unit));
+    let price = get_unit_price(unit.get_id());
     let unit_initial_hull_plating = get_unit_initial_hull_plating(armour, price.metal, price.crystal);
-    let hull_percentage = get_hull(unit) as f64 / unit_initial_hull_plating as f64;
+    let hull_percentage = unit.get_hull() as f64 / unit_initial_hull_plating as f64;
     if hull_percentage < 0.7 {
         let probability_of_exploding = 1.0 - hull_percentage;
         let dice = roll_dice();
@@ -800,9 +800,9 @@ fn has_exploded(armour: u8, unit: &CombatUnit) -> bool {
 }
 
 fn unit_2_str(unit: &CombatUnit, weapon: u8) -> String {
-    let unit_name = get_unit_name(get_id(unit));
-    let weapon = get_unit_weapon_power(get_id(unit), weapon);
-    format!("{} with {} {} {}", unit_name, get_hull(unit), get_shield(unit), weapon)
+    let unit_name = get_unit_name(unit.get_id());
+    let weapon = get_unit_weapon_power(unit.get_id(), weapon);
+    format!("{} with {} {} {}", unit_name, unit.get_hull(), unit.get_shield(), weapon)
 }
 
 fn get_another_shot(unit: &CombatUnit, target_unit: &CombatUnit) -> bool {
@@ -816,17 +816,17 @@ fn get_another_shot(unit: &CombatUnit, target_unit: &CombatUnit) -> bool {
         }
         if dice <= chance {
             if SHOULD_LOG {
-                println!("{} gets another shot.", get_unit_name(get_id(unit)));
+                println!("{} gets another shot.", get_unit_name(unit.get_id()));
             }
         } else {
             if SHOULD_LOG {
-                println!("{} does not get another shot.", get_unit_name(get_id(unit)));
+                println!("{} does not get another shot.", get_unit_name(unit.get_id()));
             }
             rapid_fire = false;
         }
     } else {
         if SHOULD_LOG {
-            println!("{} doesn't have rapid fire against {}.", get_unit_name(get_id(unit)), get_unit_name(get_id(target_unit)));
+            println!("{} doesn't have rapid fire against {}.", get_unit_name(unit.get_id()), get_unit_name(target_unit.get_id()));
         }
         rapid_fire = false;
     }
@@ -840,7 +840,7 @@ fn units_fire(attacker: &Entity, defender: &mut Entity) {
         while rapid_fire {
             let random = rand::random::<u32>() % defender.total_units;
             let target_unit = &mut defender.units[random as usize];
-            if is_alive(target_unit) {
+            if target_unit.is_alive() {
                 attack(attacker, unit, defender.armour, defender.weapon, target_unit);
             }
             rapid_fire = get_another_shot(unit, target_unit);
@@ -904,8 +904,8 @@ fn restore_shields(entity: &mut Entity) {
             println!("{} still has integrity, restore its shield", unit_str);
         }
         let unit = &mut entity.units[i as usize];
-        let criss = get_id(unit);
-        set_shield(unit, get_unit_initial_shield(criss, entity.shield));
+        let criss = unit.get_id();
+        unit.set_shield(get_unit_initial_shield(criss, entity.shield));
     }
 }
 
@@ -919,9 +919,9 @@ fn remove_entity_destroyed_units(simulator: &mut Simulator, criss: u32) {
     let l = entity.total_units;
     for i in (0..l).rev() {
         let unit = entity.units[i as usize];
-        if get_hull(&unit) <= 0 {
-            let unit_price = get_unit_price(get_id(&unit));
-            if is_ship(get_id(&unit)) {
+        if unit.get_hull() <= 0 {
+            let unit_price = get_unit_price(unit.get_id());
+            if is_ship(unit.get_id()) {
                 simulator.debris.metal += (simulator.fleet_to_debris * unit_price.metal as f64) as u64;
                 simulator.debris.crystal += (simulator.fleet_to_debris * unit_price.crystal as f64) as u64;
             }
